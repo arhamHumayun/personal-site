@@ -1,24 +1,25 @@
-import { Blockquote, H1, H2, H3, H4, InlineCode, Large, Lead, Muted, P } from "@/components/typography";
+import { H1, Lead, P } from "@/components/typography";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <H1>Arham Humayun</H1>
-      <H2>Software Engineer</H2>
-      <Lead>
-        I'm a software engineer with a passion for building products that help
-        people live better lives.
-      </Lead>
-      <H3>Typography Test</H3>
-      <H4>This is an H4 heading</H4>
-      <P>This is a regular paragraph with some 
-        <InlineCode>inline code</InlineCode>
-      to demonstrate different text styles.</P>
-      <Blockquote>
-        This is a blockquote to show how quoted text looks in our design system.
-      </Blockquote>
-      <Large>This is large text</Large>
-      <Muted>This is muted text</Muted>
+      <div className="text-center space-y-6 max-w-2xl">
+        <H1>Hey there! 👋</H1>
+        <Lead>Welcome to my personal website. I'm Arham Humayun, a software developer passionate about building things for the web.</Lead>
+        <P>Feel free to explore my blog posts, check out my projects, or get in touch!</P>
+        <div className="flex justify-center space-x-4 mt-8">
+          <Link href="/blog" prefetch={true} className="text-primary hover:underline">
+            Read my blog
+          </Link>
+          <Link href="/projects" prefetch={true} className="text-primary hover:underline">
+            View my projects
+          </Link>
+          <Link href="/contact" prefetch={true} className="text-primary hover:underline">
+            Get in touch
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

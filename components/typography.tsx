@@ -91,7 +91,7 @@ const H1: React.FC<Props> = ({className, children}) => {
     return (
       <a
         href={href || '#'}
-        className={`font-medium text-primary underline underline-offset-4 ${className}`}
+        className={`font-medium text-primary no-underline ${className}`}
       >
         {children}
       </a>

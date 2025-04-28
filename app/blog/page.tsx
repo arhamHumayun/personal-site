@@ -42,6 +42,16 @@ async function getPostMetadata(slug: string) {
   }
 }
 
+// Simple date formatting function
+function formatDate(dateString: string | undefined) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 
 export default async function Blog() {
   const slugs = await getPostSlugs();
@@ -56,19 +66,31 @@ export default async function Blog() {
   return (
     <div>
       <H2>Blog</H2>
-      <P>
-        I write about my experiences and thoughts on my blog. Here are some entries:
-      </P>
       {/* List of blog posts */}
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 space-y-8">
         {validPosts.length > 0 ? (
-          validPosts.map((post) => (
-            <div key={post.slug}>
-              <Link href={`/blog/${post.slug}`}>
-                 {/* Use a more descriptive element or style as needed */}
-                <h3 className="text-xl font-semibold hover:underline">{post.title}</h3>
-              </Link>
-              <P>{post.description}</P>
+          validPosts.map((post, idx) => (
+            <div key={post.slug} className="flex items-start gap-6">
+              {/* Timeline date and line */}
+              <div className="flex flex-col items-center min-w-[120px]">
+                <span className="text-sm text-muted-foreground font-medium mb-2">
+                  {post.date ? formatDate(post.date) : ''}
+                </span>
+                {/* Vertical line for timeline, except for last post */}
+                {idx !== validPosts.length - 1 && (
+                  <span className="block w-px flex-1 bg-muted-foreground/20" style={{ minHeight: '2.5rem' }} />
+                )}
+              </div>
+              {/* Post content */}
+              <div className="flex-1">
+                <Link href={`/blog/${post.slug}`} prefetch={true}>
+                  <h3 className="text-xl font-semibold hover:underline">{post.title}</h3>
+                </Link>
+                <P>{post.description}.</P>
+                {idx !== validPosts.length - 1 && (
+                  <hr className="my-6 border-t border-muted-foreground/20" />
+                )}
+              </div>
             </div>
           ))
         ) : (

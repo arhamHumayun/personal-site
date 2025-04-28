@@ -116,16 +116,13 @@ const items = await db.query('SELECT * FROM items');`}
       <P>
         While the technical aspects of building with AI were fascinating, the journey of creating a SaaS product was equally enlightening. I focused on marketing through Reddit and Product Hunt, targeting DnD communities that would find value in MonsterLabs. Getting my first real customers was a huge milestone - seeing people actually use and pay for something I created was incredibly rewarding.
       </P>
-      <div className="my-8">
+      <div className="my-8 flex flex-col items-center">
         <Image
           src="/images/stripe-moneys.webp"
           alt="Net income from Stripe screenshot"
-          // Responsive image setup
           width={700}
           height={400}
-          // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          // style={{ width: '100%', height: 'auto' }}
-          className="rounded-lg" // Removed mx-auto
+          className="rounded-lg"
         />
         <P className="text-center text-sm text-muted-foreground mt-2">Net income from Stripe</P>
       </div>

@@ -319,9 +319,8 @@ return (
       <H2>Results</H2>
       <UL>
         <LI>Simple to implement</LI>
-        <LI>Real-time feel</LI>
+        <LI>Streaming feel even after disconnects</LI>
         <LI>Controlled database load</LI>
-        <LI>Refresh safety</LI>
       </UL>
 
       <P>

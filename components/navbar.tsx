@@ -20,7 +20,7 @@ const navItems = [
 export function Navbar() {
   return (
     <div className="flex items-center p-4 sticky top-0 z-50 bg-background">
-      <Link href="/" className="font-bold text-lg">
+      <Link href="/" prefetch={true} className="font-bold text-lg">
         <H4>Arham Humayun</H4>
       </Link>
       <div className="flex-grow" />
@@ -29,7 +29,7 @@ export function Navbar() {
           {navItems.map((item) => (
             <NavigationMenuItem key={item.label}>
               <Button variant="ghost" asChild>
-                <Link href={item.href} className="navigationMenuTriggerStyle()">
+                <Link href={item.href} prefetch={true} className="navigationMenuTriggerStyle()">
                   {item.label}
                 </Link>
               </Button>
