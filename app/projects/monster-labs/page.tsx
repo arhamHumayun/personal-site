@@ -32,6 +32,7 @@ export default function MonsterLabs() {
           <Link
             href="https://monsterlabs.app"
             prefetch={true}
+            target="_blank"
           >
             Visit Monster Labs
         </Link>

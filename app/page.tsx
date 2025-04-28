@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <div className="text-center space-y-6 max-w-2xl">
-        <H1>Hey there! &#39;👋</H1>
+        <H1>Hey there! 👋</H1>
         <Lead>Welcome to my personal website. I&#39;m Arham Humayun, a software developer passionate about building things for the web.</Lead>
         <P>Feel free to explore my blog posts, check out my projects, or get in touch!</P>
         <div className="flex justify-center space-x-4 mt-8">

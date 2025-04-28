@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 interface Props {
@@ -89,12 +90,13 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const A: React.FC<Props & { href?: string }> = ({ className, children, href }) => {
     return (
-      <a
+      <Link
+        prefetch={true}
         href={href || '#'}
         className={`font-medium text-primary no-underline ${className}`}
       >
         {children}
-      </a>
+      </Link>
     );
   };
 

@@ -31,6 +31,7 @@ export default function RaceTelemetryDashboard() {
           <Link
             href="https://github.com/UCalgaryRacing/STMDisplay"
             prefetch={true}
+            target="_blank"
           >
             View on GitHub
         </Link>
