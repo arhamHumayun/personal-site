@@ -1,6 +1,6 @@
 import { ProjectLayout } from '@/components/project/ProjectLayout';
 import { ProjectHeader } from '@/components/project/ProjectHeader';
-import { A, P } from '@/components/typography';
+import { P } from '@/components/typography';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 export const metadata = {

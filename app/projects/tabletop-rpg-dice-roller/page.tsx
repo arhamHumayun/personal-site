@@ -20,7 +20,7 @@ export default function TabletopRPGDiceRoller() {
         image={metadata.img}
       />
         <P>
-          One of my first projects! A tabletop RPG dice roller and character builder built with React and Bootstrap. It's a simple and easy to use dice roller for your tabletop RPG needs.
+          One of my first projects! A tabletop RPG dice roller and character builder built with React and Bootstrap. It&#39;s a simple and easy to use dice roller for your tabletop RPG needs.
         </P>
         <Button
           asChild

@@ -1,4 +1,4 @@
-import { H1, H2, P } from "@/components/typography";
+import { H2, P } from "@/components/typography";
 import fs from "fs";
 import path from "path";
 import Link from "next/link";

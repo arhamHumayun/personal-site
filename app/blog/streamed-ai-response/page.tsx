@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, H3, H4, Blockquote } from '@/components/typography';
+import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote } from '@/components/typography';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
@@ -91,7 +91,7 @@ export default function StreamedAIResponsePost() {
         As of 2025-04-28. Tested on Chrome
       </Muted>
       <P>
-        To get both real-time streaming and persistence, you need to decouple the LLM stream from the HTTP request and persist every chunk. Most frameworks don't help you do this. The Vercel AI SDK assumes Node and Next.js API routes. If you use Convex or another backend, you end up streaming across systems, adding latency and risk.
+        To get both real-time streaming and persistence, you need to decouple the LLM stream from the HTTP request and persist every chunk. Most frameworks don&#39;t help you do this. The Vercel AI SDK assumes Node and Next.js API routes. If you use Convex or another backend, you end up streaming across systems, adding latency and risk.
       </P>
 
       <Blockquote>How does Convex help?</Blockquote>
@@ -109,7 +109,7 @@ export default function StreamedAIResponsePost() {
       <H2>1. Start the chat with <code>startChatMessagePair</code>.</H2>
       <P>This Convex action:</P>
       <UL>
-        <LI>Stores the user's message</LI>
+        <LI>Stores the user&#39;s message</LI>
         <LI>Creates a blank assistant message</LI>
         <LI>Immediately schedules a job to generate the reply</LI>
       </UL>
@@ -144,10 +144,10 @@ const handleSubmit = async (e: React.FormEvent) => {
 };`}
       </SyntaxHighlighter>
 
-      <H2>2. Save the user's message and initiate the LLM response</H2>
+      <H2>2. Save the user&#39;s message and initiate the LLM response</H2>
       <P>This Convex action:</P>
       <UL>
-        <LI>Saves the user message</LI>
+        <LI>Stores the user&#39;s message</LI>
         <LI>Creates a blank assistant message</LI>
         <LI>Schedules the LLM job to generate the reply immediately</LI>
       </UL>
@@ -293,7 +293,7 @@ You are currently in a world with the following characters:
 
       <H2>4. Use <code>useQuery</code> to stream the response</H2>
       <P>
-        Convex's <code>useQuery</code> is reactive, so it'll update as soon as the message is saved.
+        Convex&#39;s <code>useQuery</code> is reactive, so it&#39;ll update as soon as the message is saved.
       </P>
       <SyntaxHighlighter
         language="tsx"
@@ -324,10 +324,10 @@ return (
       </UL>
 
       <P>
-        Hope this helps if you're building something similar. Like everything in engineering, this solution has tradeoffs, but it works well for me.
+        Hope this helps if you&#39;re building something similar. Like everything in engineering, this solution has tradeoffs, but it works well for me.
       </P>
       <P>
-        If you're building something real with AI don't just trust the magic SDKs. Understand what's happening under the hood. Own your infra.
+        If you&#39;re building something real with AI don&#39;t just trust the magic SDKs. Understand what&#39;s happening under the hood. Own your infra.
       </P>
 
       <H2>What This is For: Veilborn</H2>
@@ -341,10 +341,10 @@ return (
         <LI>A persistent world with AI-driven storytelling</LI>
       </UL>
       <P>
-        It's ambitious, but I've never been more excited about a project.
+        It&#39;s ambitious, but I&#39;ve never been more excited about a project.
       </P>
       <P>
-        Also, if you're into TTRPGs, check out my side project: <A href="https://monsterlabs.app">MonsterLabs.app</A>, where you can create AI-driven monsters and items for D&amp;D.
+        Also, if you&#39;re into TTRPGs, check out my side project: <A href="https://monsterlabs.app">MonsterLabs.app</A>, where you can create AI-driven monsters and items for D&amp;D.
         I also wrote about it <A href="/blog/monster-labs-1">here</A>.
       </P>
     </BlogPostLayout>

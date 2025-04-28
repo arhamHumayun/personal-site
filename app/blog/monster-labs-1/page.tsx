@@ -25,15 +25,15 @@ export default function StructuredOutputPost() {
       />
 
       <P>
-        One of my goals for 2024 was to build a software product that actually made money. I've been working on MonsterLabs, an AI-powered platform for generating custom Dungeons & Dragons monsters and magic items. While building this project, I learned a lot about structured object generation with AI and how to build a successful SaaS product. Let me share what I've learned.
+        One of my goals for 2024 was to build a software product that actually made money. I&#39;ve been working on MonsterLabs, an AI-powered platform for generating custom Dungeons & Dragons monsters and magic items. While building this project, I learned a lot about structured object generation with AI and how to build a successful SaaS product. Let me share what I&#39;ve learned.
       </P>
 
       <H2>The Power of Structured Output in AI Applications</H2>
       <P>
-        When building AI-powered applications, one of the most critical aspects is ensuring consistent, reliable output from the AI model. I've found that structured output (or function calling) is absolutely crucial for this. While structured outputs weren't available when I started MonsterLabs, I used function calling, which essentially involves getting the AI to return a JSON object that follows a specific schema.
+        When building AI-powered applications, one of the most critical aspects is ensuring consistent, reliable output from the AI model. I&#39;ve found that structured output (or function calling) is absolutely crucial for this. While structured outputs weren&#39;t available when I started MonsterLabs, I used function calling, which essentially involves getting the AI to return a JSON object that follows a specific schema.
       </P>
       <P>
-        The key to success here is creating a well-defined, consistent data structure that the AI can easily understand. I used Zod for schema validation, and it's been a game-changer. Here's a practical example from MonsterLabs:
+        The key to success here is creating a well-defined, consistent data structure that the AI can easily understand. I used Zod for schema validation, and it&#39;s been a game-changer. Here&#39;s a practical example from MonsterLabs:
       </P>
 
       <SyntaxHighlighter
@@ -89,9 +89,9 @@ export const itemSchema = z.object({
 
       <H2>Optimizing the Application</H2>
       <P>
-        While building MonsterLabs, I also learned valuable lessons about application optimization. NextJS's caching and ISR (Incremental Static Regeneration) capabilities were crucial for performance. For example, when viewing a single monster or magic item, we cache the API response and serve it instantly on subsequent loads.
+        While building MonsterLabs, I also learned valuable lessons about application optimization. NextJS&#39;s caching and ISR (Incremental Static Regeneration) capabilities were crucial for performance. For example, when viewing a single monster or magic item, we cache the API response and serve it instantly on subsequent loads.
       </P>
-      <P>Data fetching optimization was another important aspect. Here's a practical example of concurrent database queries:</P>
+      <P>Data fetching optimization was another important aspect. Here&#39;s a practical example of concurrent database queries:</P>
 
       <SyntaxHighlighter
         language="typescript"
@@ -137,7 +137,7 @@ const items = await db.query('SELECT * FROM items');`}
         <LI>Understanding your market and users</LI>
       </UL>
       <P>
-        While I've only scratched the surface of what I've learned (this could easily be a book!), these insights have been invaluable. I'm excited to continue improving MonsterLabs and sharing more lessons learned along the way.
+        While I&#39;ve only scratched the surface of what I&#39;ve learned (this could easily be a book!), these insights have been invaluable. I&#39;m excited to continue improving MonsterLabs and sharing more lessons learned along the way.
       </P>
     </BlogPostLayout>
   );

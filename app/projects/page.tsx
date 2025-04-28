@@ -16,7 +16,7 @@ async function getProjectMetadata(slug: string) {
   try {
     const mod = await import(`./${slug}/page`);
     return { slug, ...mod.metadata };
-  } catch (e) {
+  } catch {
     return { slug, title: slug, description: "No description.", img: "", url: "" };
   }
 }
