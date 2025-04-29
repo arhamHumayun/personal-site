@@ -19,16 +19,11 @@ export default function StreamedAIResponsePost() {
         date={metadata.date}
       />
       <P>
-        I wanted to build an AI chat that streams responses in real-time, persists messages, survives refreshes, and supports multiple LLMs and structured generation. Most frameworks make this hard.
+        Building a production-ready AI chat interface is deceptively complex. While streaming responses in real-time seems straightforward, the devil is in the details: ensuring messages persist across page refreshes, handling network interruptions gracefully, and supporting multiple LLMs while maintaining a consistent user experience. Most frameworks fall short here, either losing in-progress responses or requiring complex workarounds to maintain state.
       </P>
-      <UL>
-        <LI>Streamed, real-time assistant responses</LI>
-        <LI>Messages saved as they generate</LI>
-        <LI>Survives refreshes and disconnects</LI>
-        <LI>Multiple AI models (OpenAI, Claude, Gemini...)</LI>
-        <LI>Structured generation</LI>
-        <LI>Clean, production-ready code</LI>
-      </UL>
+      <P>
+        After evaluating several options, I decided to build on top of the Vercel AI SDK. While it's not perfect out of the box, its clean interface for LLM integration and structured generation made it the best foundation to build upon. The challenge would be extending it to handle the persistence and reliability requirements of a production chat system.
+      </P>
 
       <Blockquote>Why the Vercel AI SDK?</Blockquote>
       <P>
@@ -168,20 +163,18 @@ const handleSubmit = async (e: React.FormEvent) => {
   }),
   handler: async (ctx, { threadId, content, worldId }) => {
     // 1. Create user message and blank assistant message concurrently for better performance
-    const [_, assistantMessageId] = await Promise.all([
-      ctx.runMutation(api.messages.createMessage, {
-        threadId,
-        role: 'user',
-        content,
-        isComplete: true,
-      }),
-      ctx.runMutation(api.messages.createMessage, {
-        threadId,
-        role: 'assistant',
-        content: '',
-        isComplete: false,
-      })
-    ]);
+    const userMessage = await ctx.runMutation(api.messages.createMessage, {
+      threadId,
+      role: 'user',
+      content,
+      isComplete: true,
+    });
+    const assistantMessageId = await ctx.runMutation(api.messages.createMessage, {
+      threadId,
+      role: 'assistant',
+      content: '',
+      isComplete: false,
+    });
 
     // 2. Schedule the LLM job immediately
     await ctx.scheduler.runAfter(0, internal.llm.generateAssistantMessage, {
@@ -317,11 +310,9 @@ return (
       </SyntaxHighlighter>
 
       <H2>Results</H2>
-      <UL>
-        <LI>Simple to implement</LI>
-        <LI>Streaming feel even after disconnects</LI>
-        <LI>Controlled database load</LI>
-      </UL>
+      <P>
+        After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.
+      </P>
 
       <P>
         Hope this helps if you&#39;re building something similar. Like everything in engineering, this solution has tradeoffs, but it works well for me.
