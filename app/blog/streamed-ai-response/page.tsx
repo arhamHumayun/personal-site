@@ -4,6 +4,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
 import { BlogPostHeader } from '@/components/blog/BlogPostHeader';
 import Image from 'next/image';
+import { SyntaxHighligherWrapper } from '@/components/syntax-highligher-wrapper';
 
 export const metadata = {
   title: "Unbreakable AI Chat: Streaming Responses with Convex + Vercel AI SDK",
@@ -116,13 +117,9 @@ export default function StreamedAIResponsePost() {
         <LI>Creates a blank assistant message</LI>
         <LI>Immediately schedules a job to generate the reply</LI>
       </UL>
-      <SyntaxHighlighter
-        language="typescript"
-        style={vscDarkPlus}
-        PreTag="div"
-        className="rounded-md my-4"
-      >
-        {`// In your client component
+      <SyntaxHighligherWrapper
+        text={
+`// In your client component
 const startChat = useAction(api.chat.startChatMessagePair);
 
 const sendMessage = async () => {
@@ -144,9 +141,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   await sendMessage();
   formRef.current?.reset();
-};`}
-      </SyntaxHighlighter>
-
+};`} />
       <H2>2. Save the user&#39;s message and initiate the LLM response</H2>
       <P>This Convex action:</P>
       <UL>
@@ -154,13 +149,10 @@ const handleSubmit = async (e: React.FormEvent) => {
         <LI>Creates a blank assistant message</LI>
         <LI>Schedules the LLM job to generate the reply immediately</LI>
       </UL>
-      <SyntaxHighlighter
-        language="typescript"
-        style={vscDarkPlus}
-        PreTag="div"
-        className="rounded-md my-4"
-      >
-        {`export const startChatMessagePair = action({
+      <SyntaxHighligherWrapper
+          text={
+`
+export const startChatMessagePair = action({
   args: {
     threadId: v.id('messageThreads'),
     content: v.string(),
@@ -194,9 +186,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     return { assistantMessageId };
   },
-});`}
-      </SyntaxHighlighter>
-
+});`} />
       <H2>3. Generate the response in <code>internal.llm.generateAssistantMessage</code></H2>
       <P>This internal Convex action:</P>
       <UL>
@@ -205,13 +195,9 @@ const handleSubmit = async (e: React.FormEvent) => {
         <LI>Keeps them in memory</LI>
         <LI>Saves to Convex every 150ms</LI>
       </UL>
-      <SyntaxHighlighter
-        language="typescript"
-        style={vscDarkPlus}
-        PreTag="div"
-        className="rounded-md my-4"
-      >
-        {`export const generateAssistantMessage = internalAction({
+      <SyntaxHighligherWrapper
+
+      text={`export const generateAssistantMessage = internalAction({
   args: {
     threadId: v.id("messageThreads"),
     content: v.string(),
@@ -290,20 +276,14 @@ You are currently in a world with the following characters:
 
     console.log("Text generation finished.");
   },
-});`}
-      </SyntaxHighlighter>
+});`} />
 
       <H2>4. Use <code>useQuery</code> to stream the response</H2>
       <P>
         Convex&#39;s <code>useQuery</code> is reactive, so it&#39;ll update as soon as the message is saved.
       </P>
-      <SyntaxHighlighter
-        language="tsx"
-        style={vscDarkPlus}
-        PreTag="div"
-        className="rounded-md my-4"
-      >
-        {`const messages = useQuery(api.messages.getMessages, { threadId });
+      <SyntaxHighligherWrapper
+        text={`const messages = useQuery(api.messages.getMessages, { threadId });
 
 // ...
 return (
@@ -315,9 +295,7 @@ return (
       </div>
     ))}
   </div>
-);`}
-      </SyntaxHighlighter>
-
+);`} />
       <H2>Results</H2>
       <P>
         After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.

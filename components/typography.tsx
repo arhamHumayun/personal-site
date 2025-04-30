@@ -118,8 +118,8 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const Table: React.FC<Props> = ({ className, children }) => {
     return (
-      <div className={`my-6 w-full overflow-y-auto ${className}`}>
-        <table className={`w-full`}>
+      <div className={`my-6 w-full overflow-x-auto -mx-4 sm:mx-0 ${className}`}>
+        <table className={`w-full text-xs sm:text-sm md:text-base`}>
           {children}
         </table>
       </div>
@@ -153,7 +153,7 @@ const H1: React.FC<Props> = ({className, children}) => {
   const Th: React.FC<Props & { align?: 'left' | 'center' | 'right' }> = ({ className, children, align }) => {
     const alignmentClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
     return (
-      <th className={`border px-4 py-2 font-bold [&[align=center]]:text-center [&[align=right]]:text-right ${alignmentClass} ${className}`}>
+      <th className={`border px-2 sm:px-4 py-1 sm:py-2 font-bold [&[align=center]]:text-center [&[align=right]]:text-right ${alignmentClass} ${className}`}>
         {children}
       </th>
     );
@@ -162,7 +162,7 @@ const H1: React.FC<Props> = ({className, children}) => {
   const Td: React.FC<Props & { align?: 'left' | 'center' | 'right' }> = ({ className, children, align }) => {
     const alignmentClass = align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left';
     return (
-      <td className={`border px-4 py-2 [&[align=center]]:text-center [&[align=right]]:text-right ${alignmentClass} ${className}`}>
+      <td className={`border px-2 sm:px-4 py-1 sm:py-2 [&[align=center]]:text-center [&[align=right]]:text-right ${alignmentClass} ${className}`}>
         {children}
       </td>
     );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "./ui/navigation-menu";
 import { Button } from "./ui/button";
 import { H4 } from "./typography";
+
 const navItems = [
   {
     label: "Blog",
@@ -19,11 +20,10 @@ const navItems = [
 
 export function Navbar() {
   return (
-    <div className="flex items-center p-4 sticky top-0 z-50 bg-background">
+    <div className="flex items-center justify-between p-4 z-50 bg-background w-full max-w-7xl mx-auto">
       <Link href="/" prefetch={true} className="font-bold text-lg">
         <H4>Arham Humayun</H4>
       </Link>
-      <div className="flex-grow" />
       <NavigationMenu>
         <NavigationMenuList>
           {navItems.map((item) => (
