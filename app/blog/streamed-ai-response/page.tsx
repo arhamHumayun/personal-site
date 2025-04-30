@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote } from '@/components/typography';
+import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote, H3 } from '@/components/typography';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
@@ -6,7 +6,7 @@ import { BlogPostHeader } from '@/components/blog/BlogPostHeader';
 import Image from 'next/image';
 
 export const metadata = {
-  title: "Building a Snappy, Reliable AI Chat with Convex",
+  title: "Unbreakable AI Chat: Streaming Responses with Convex + Vercel AI SDK",
   description: "How I built a persistent, reliable chat system with Convex and the AI SDK",
   date: "2025-04-10",
 };
@@ -20,25 +20,29 @@ export default function StreamedAIResponsePost() {
         date={metadata.date}
       />
       <P>
-        Building a production-ready AI chat interface is deceptively complex. 
-        While streaming responses in real-time seems straightforward, the devil is in the details: ensuring messages persist across page refreshes, handling network interruptions gracefully, and supporting multiple LLMs while maintaining a consistent user experience. 
-        Most frameworks fall short here, either losing in-progress responses or requiring complex workarounds to maintain state.
+      Streaming AI responses is easy until something goes wrong. Maybe your user loses internet, or your server hiccups. 
+      Suddenly, your beautiful real-time chat breaks. Lost messages and broken UX with no recovery. 
+      I built a solution using Convex and the Vercel AI SDK that solves this with minimal complexity and no database spam.
       </P>
       <P>
-        After evaluating several options, I decided to build on top of the Vercel AI SDK. While it&#39;s not perfect out of the box, its clean interface for LLM integration and structured generation made it the best foundation to build upon. 
+        After evaluating several options, I decided to build on top of the Vercel AI SDK. 
+        While it&#39;s not perfect out of the box, it's clean interface for LLM integration and structured generation made it the best foundation to build upon. 
         The challenge would be extending it to handle the persistence and reliability requirements of a production chat system.
       </P>
 
-      <Blockquote>Why the Vercel AI SDK?</Blockquote>
+      <H2>Why I Picked the Vercel AI SDK (Despite Its Limits)</H2>
       <P>
         The <A href="https://sdk.vercel.ai">Vercel AI SDK</A> is great for swapping LLMs, structured generation, and a clean interface. But <code>useChat()</code> is limiting for production chat UIs that need custom streaming and persistence.
       </P>
 
       <H2>The F5 Problem</H2>
       <P>
-        Most AI chats lose in-progress responses if you refresh or disconnect. They stream over HTTP, so if the request is interrupted, you lose the message unless you save every chunk.
+        Most AI chat UIs fail the basic resilience test. Refresh the page mid-stream or lose internet? 
+        You&#39;ve either lost the message or wait until its fully generated and then refresh the page to see it.
+        <br/>
+        Here&#39;s how some of today&#39;s top platforms stack up:
       </P>
-      <div className="overflow-x-auto my-4">
+      <div className="overflow-x-auto">
         <Table className="min-w-full text-sm border border-muted-foreground">
           <Thead>
             <Tr>
@@ -95,7 +99,7 @@ export default function StreamedAIResponsePost() {
 
       <Blockquote>How does Convex help?</Blockquote>
       <P>
-        <A href="https://convex.dev">Convex</A> lets you put LLM logic right next to your database. This means we have minimal API hops, and fast operatations.
+        <A href="https://convex.dev">Convex</A> lets you put LLM logic right next to your database. This means we have minimal network hops, and fast data operations.
       </P>
 
       <Blockquote>Saving Every Token?</Blockquote>
@@ -242,6 +246,7 @@ You are currently in a world with the following characters:
       messages: fullPrompt as CoreMessage[],
     });
 
+    // Buffer incoming chunks to reduce write pressure. Flush to DB every 150ms.
     let accumulated = "";
     let buffer = "";
     let flushTimeout: NodeJS.Timeout | null = null;
@@ -316,7 +321,7 @@ return (
       <H2>Results</H2>
       <P>
         After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.
-      The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 150ms.
+        The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 150ms.
       </P>
 
       <div className="flex flex-col items-center mt-4">
@@ -332,8 +337,12 @@ return (
         </Muted>
       </div>
 
+      <H2>Final Thoughts</H2>
       <P>
-        Hope this helps if you&#39;re building something similar. Like everything in engineering, this solution has tradeoffs, but it works well for me.
+        If you&#39;re building real AI products, you can&#39;t afford to ignore resilience. 
+        The risk of losing a message increases the longer your response takes.
+        This system works well for me, but it's not a silver bullet. 
+        If your use case demands token-level persistence (like hallucination tracking or audit logs), you'll need to tweak the flush cadence, or add extra logic.
       </P>
       <P>
         If you&#39;re building something real with AI don&#39;t just trust the magic SDKs. Understand what&#39;s happening under the hood. Own your infra.

@@ -42,7 +42,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const P: React.FC<Props> = ({className, children}) => {
     return (
-      <p className={`leading-7 [&:not(:first-child)]:mt-6 ${className}`}>
+      <p className={`leading-7 [&:not(:first-child)]:mt-4 ${className}`}>
        {children}
       </p>
     )
