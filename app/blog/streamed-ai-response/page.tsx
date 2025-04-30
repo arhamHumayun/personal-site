@@ -300,15 +300,19 @@ return (
         The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 150ms.
       </P>
 
-      <div className="flex flex-col items-center mt-4">
-      <Image
-        unoptimized
-        src={'/images/streaming-chat.gif'}
-        alt="Streaming Chat"
-        width={500}
-        height={500}
-      />
-      <Muted>
+      <div className="flex flex-col items-center mt-4 w-full">
+        <div className="w-full max-w-[500px]">
+          <Image
+            unoptimized
+            src={'/images/streaming-chat.gif'}
+            alt="Streaming Chat"
+            width={500}
+            height={500}
+            className="w-full h-auto"
+            priority
+          />
+        </div>
+        <Muted>
           Example of the streaming chat in action. The grey flashes are me refreshing the page
         </Muted>
       </div>
