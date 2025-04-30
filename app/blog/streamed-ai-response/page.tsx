@@ -3,6 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
 import { BlogPostHeader } from '@/components/blog/BlogPostHeader';
+import Image from 'next/image';
 
 export const metadata = {
   title: "Building a Snappy, Reliable AI Chat with Convex",
@@ -312,7 +313,21 @@ return (
       <H2>Results</H2>
       <P>
         After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.
+      The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 150ms.
       </P>
+
+      <div className="flex flex-col items-center mt-4">
+      <Image
+        unoptimized
+        src={'/images/streaming-chat.gif'}
+        alt="Streaming Chat"
+        width={500}
+        height={500}
+      />
+      <Muted>
+          Example of the streaming chat in action. The grey flashes are me refreshing the page
+        </Muted>
+      </div>
 
       <P>
         Hope this helps if you&#39;re building something similar. Like everything in engineering, this solution has tradeoffs, but it works well for me.

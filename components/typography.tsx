@@ -93,7 +93,7 @@ const H1: React.FC<Props> = ({className, children}) => {
       <Link
         prefetch={true}
         href={href || '#'}
-        className={`font-medium text-primary no-underline ${className}`}
+        className={`font-medium text-primary underline ${className}`}
       >
         {children}
       </Link>
