@@ -6,7 +6,7 @@ interface BlogPostLayoutProps {
 
 export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ children }) => {
   return (
-    <article className="prose dark:prose-invert text-wrap max-w-5xl mx-auto px-4 sm:px-8 min-w-0 w-full -mx-4 sm:mx-0">
+    <article className="prose dark:prose-invert text-wrap max-w-5xl mx-auto px-4 min-w-0 w-full">
       {children}
     </article>
   );
