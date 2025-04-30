@@ -62,14 +62,20 @@ export default async function Blog() {
   // Filter out any posts that had errors loading metadata
   const validPosts = postsMetadata.filter(post => !post.error);
 
+  // Sort posts by date, most recent first
+  const sortedPosts = validPosts.sort((a, b) => {
+    const dateA = a.date ? new Date(a.date).getTime() : 0;
+    const dateB = b.date ? new Date(b.date).getTime() : 0;
+    return dateB - dateA;
+  });
 
   return (
     <div>
       <H2>Blog</H2>
       {/* List of blog posts */}
       <div className="mt-4 space-y-8">
-        {validPosts.length > 0 ? (
-          validPosts.map((post, idx) => (
+        {sortedPosts.length > 0 ? (
+          sortedPosts.map((post, idx) => (
             <div key={post.slug} className="flex items-start gap-6">
               {/* Timeline date and line */}
               <div className="flex flex-col items-center min-w-[120px]">
@@ -77,7 +83,7 @@ export default async function Blog() {
                   {post.date ? formatDate(post.date) : ''}
                 </span>
                 {/* Vertical line for timeline, except for last post */}
-                {idx !== validPosts.length - 1 && (
+                {idx !== sortedPosts.length - 1 && (
                   <span className="block w-px flex-1 bg-muted-foreground/20" style={{ minHeight: '2.5rem' }} />
                 )}
               </div>
@@ -87,7 +93,7 @@ export default async function Blog() {
                   <h3 className="text-xl font-semibold hover:underline">{post.title}</h3>
                 </Link>
                 <P>{post.description}.</P>
-                {idx !== validPosts.length - 1 && (
+                {idx !== sortedPosts.length - 1 && (
                   <hr className="my-6 border-t border-muted-foreground/20" />
                 )}
               </div>
