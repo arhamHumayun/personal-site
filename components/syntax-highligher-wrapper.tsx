@@ -8,7 +8,7 @@ interface SyntaxHighligherWrapperProps {
 
 export function SyntaxHighligherWrapper({ text, language = 'tsx' }: SyntaxHighligherWrapperProps) {
   return (
-    <div className="w-full overflow-hidden -mx-0">
+    <div className="w-full overflow-hidden">
       <div className="min-w-0 w-full">
         <div className="overflow-x-auto">
           <div className="min-w-0 w-full">

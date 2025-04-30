@@ -118,8 +118,8 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const Table: React.FC<Props> = ({ className, children }) => {
     return (
-      <div className={`my-6 w-full overflow-x-auto -mx-4 sm:mx-0 ${className}`}>
-        <table className={`w-full text-xs sm:text-sm md:text-base`}>
+      <div className={`my-6 w-full overflow-x-auto sm:mx-0 ${className}`}>
+        <table className={`w-full text-xs sm:text-sm md:text-base min-w-[320px]`}>
           {children}
         </table>
       </div>
