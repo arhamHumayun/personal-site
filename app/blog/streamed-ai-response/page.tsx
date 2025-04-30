@@ -1,6 +1,4 @@
 import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote } from '@/components/typography';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
 import { BlogPostHeader } from '@/components/blog/BlogPostHeader';
 import Image from 'next/image';
