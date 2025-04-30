@@ -20,10 +20,13 @@ export default function StreamedAIResponsePost() {
         date={metadata.date}
       />
       <P>
-        Building a production-ready AI chat interface is deceptively complex. While streaming responses in real-time seems straightforward, the devil is in the details: ensuring messages persist across page refreshes, handling network interruptions gracefully, and supporting multiple LLMs while maintaining a consistent user experience. Most frameworks fall short here, either losing in-progress responses or requiring complex workarounds to maintain state.
+        Building a production-ready AI chat interface is deceptively complex. 
+        While streaming responses in real-time seems straightforward, the devil is in the details: ensuring messages persist across page refreshes, handling network interruptions gracefully, and supporting multiple LLMs while maintaining a consistent user experience. 
+        Most frameworks fall short here, either losing in-progress responses or requiring complex workarounds to maintain state.
       </P>
       <P>
-        After evaluating several options, I decided to build on top of the Vercel AI SDK. While it's not perfect out of the box, its clean interface for LLM integration and structured generation made it the best foundation to build upon. The challenge would be extending it to handle the persistence and reliability requirements of a production chat system.
+        After evaluating several options, I decided to build on top of the Vercel AI SDK. While it&#39;s not perfect out of the box, its clean interface for LLM integration and structured generation made it the best foundation to build upon. 
+        The challenge would be extending it to handle the persistence and reliability requirements of a production chat system.
       </P>
 
       <Blockquote>Why the Vercel AI SDK?</Blockquote>
