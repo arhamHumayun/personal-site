@@ -8,7 +8,7 @@ interface Props {
 
 const H1: React.FC<Props> = ({className, children}) => {
     return (
-      <h1 className={`scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl ${className}`}>
+      <h1 className={`scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl break-words ${className}`}>
         {children}
       </h1>
     )
@@ -16,7 +16,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H2: React.FC<Props> = ({className, children}) => {
     return (
-      <h2 className={`scroll-m-20 border-b pb-1 pt-4 text-3xl font-semibold tracking-tight first:mt-0 ${className}`}>
+      <h2 className={`scroll-m-20 border-b pb-1 pt-4 text-3xl font-semibold tracking-tight first:mt-0 break-words ${className}`}>
         {children}
       </h2>
     )
@@ -24,7 +24,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H3: React.FC<Props> = ({className, children}) => {
     return (
-      <h3 className={`scroll-m-20 text-2xl font-semibold tracking-tight ${className}`}>
+      <h3 className={`scroll-m-20 text-2xl font-semibold tracking-tight break-words ${className}`}>
         {children}
       </h3>
     )
@@ -33,7 +33,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H4: React.FC<Props> = ({className, children}) => {
     return (
-      <h4 className={`scroll-m-20 text-xl font-semibold tracking-tight ${className}`}>
+      <h4 className={`scroll-m-20 text-xl font-semibold tracking-tight break-words ${className}`}>
         {children}
       </h4>
     )
