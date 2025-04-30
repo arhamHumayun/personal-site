@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote, H3 } from '@/components/typography';
+import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote } from '@/components/typography';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
@@ -26,7 +26,7 @@ export default function StreamedAIResponsePost() {
       </P>
       <P>
         After evaluating several options, I decided to build on top of the Vercel AI SDK. 
-        While it&#39;s not perfect out of the box, it's clean interface for LLM integration and structured generation made it the best foundation to build upon. 
+        While it&#39;s not perfect out of the box, it&#39;s clean interface for LLM integration and structured generation made it the best foundation to build upon. 
         The challenge would be extending it to handle the persistence and reliability requirements of a production chat system.
       </P>
 
@@ -341,8 +341,8 @@ return (
       <P>
         If you&#39;re building real AI products, you can&#39;t afford to ignore resilience. 
         The risk of losing a message increases the longer your response takes.
-        This system works well for me, but it's not a silver bullet. 
-        If your use case demands token-level persistence (like hallucination tracking or audit logs), you'll need to tweak the flush cadence, or add extra logic.
+        This system works well for me, but it&#39;s not a silver bullet. 
+        If your use case demands token-level persistence (like hallucination tracking or audit logs), you&#39;ll need to tweak the flush cadence, or add extra logic.
       </P>
       <P>
         If you&#39;re building something real with AI don&#39;t just trust the magic SDKs. Understand what&#39;s happening under the hood. Own your infra.
