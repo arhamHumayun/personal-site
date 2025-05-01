@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote } from '@/components/typography';
+import { H2, P, UL, LI, A, Table, Th, Thead, Tr, Tbody, Td, Muted, Blockquote, H1 } from '@/components/typography';
 import { BlogPostLayout } from '@/components/blog/BlogPostLayout';
 import { BlogPostHeader } from '@/components/blog/BlogPostHeader';
 import Image from 'next/image';
@@ -7,7 +7,7 @@ import { SyntaxHighligherWrapper } from '@/components/syntax-highligher-wrapper'
 export const metadata = {
   title: "Unbreakable AI Chat: Streaming Responses with Convex + Vercel AI SDK",
   description: "How I built a persistent, reliable chat system with Convex and the AI SDK",
-  date: "2025-04-10",
+  date: "2025-04-30",
 };
 
 export default function StreamedAIResponsePost() {
@@ -103,12 +103,55 @@ export default function StreamedAIResponsePost() {
 
       <Blockquote>Saving Every Token?</Blockquote>
       <P>
-        Saving every token chunk to Convex is too many writes. A job queue could help, but then you lose streaming. My solution: buffer tokens in memory and save to Convex every 150ms.
+        Saving every token chunk to Convex is too many writes. A job queue could help, but then you lose streaming. My solution: buffer tokens in memory and post a messagechunk to Convex every 200ms.
       </P>
+
+      <H1 className='mt-8'>The Solution</H1>
       <P>
-        Let me show you the solution I came up with.
+        Here's a breif overview of the solution I came up with. I'll go into more detail in the next section.
       </P>
-      <H2>1. Start the chat with <code>startChatMessagePair</code>.</H2>
+      <UL>
+        <LI>Define your message schema</LI>
+        <LI>Start the chat with <code>startChatMessagePair</code></LI>
+        <LI>Save the user's message and initiate the LLM response</LI>
+        <LI>Generate the response in <code>internal.llm.generateAssistantMessage</code></LI>
+        <LI>Use <code>useQuery</code> to stream the response</LI>
+      </UL>
+
+      <P>
+        We're going to store the message chunks in the database, 
+        but we're going to stream the tokens to the client as soon as they're generated.
+      </P>
+
+      <H2>1. Define your message schema</H2>
+      <P>
+        This is the schema I used for the chat. We're going to need a message thread, a message, and a message chunk.
+        The message thread is just a title. The message is the user's message or the AI's response. The message chunk is a chunk of the AI's response.
+      </P>
+      <SyntaxHighligherWrapper
+        text={
+`const messageThreads = defineTable({
+  title: v.string(),
+}).index("by_title", ["title"]);
+
+const messageChunks = defineTable({
+  content: v.string(),
+  messageId: v.id("messages"),
+}).index("by_messageId_and_creationTime", ["messageId", "_creationTime"]);
+
+const messages = defineTable({
+  isComplete: v.optional(v.boolean()),
+  role: v.union(v.literal("user"), v.literal("assistant")),
+  threadId: v.id("messageThreads"),
+}).index("by_threadId_and_creationTime", ["threadId", "_creationTime"]);
+
+const userSettings = defineTable({
+  userId: v.id("users"),
+  role: v.union(v.literal("free"), v.literal("pro"), v.literal("admin")),
+}).index("by_userId", ["userId"]);`} 
+/>
+
+      <H2>2. Start the chat with <code>startChatMessagePair</code>.</H2>
       <P>This Convex action:</P>
       <UL>
         <LI>Stores the user&#39;s message</LI>
@@ -127,7 +170,6 @@ const sendMessage = async () => {
 
   await startChat({
     threadId,
-    worldId,
     content: input,
   });
 
@@ -149,40 +191,67 @@ const handleSubmit = async (e: React.FormEvent) => {
       </UL>
       <SyntaxHighligherWrapper
           text={
-`
-export const startChatMessagePair = action({
+`export const startChatMessagePair = action({
   args: {
     threadId: v.id('messageThreads'),
     content: v.string(),
-    worldId: v.id('worlds'),
+    saveId: v.id('saves'),
   },
   returns: v.object({
     assistantMessageId: v.id("messages"),
   }),
-  handler: async (ctx, { threadId, content, worldId }) => {
-    // 1. Create user message and blank assistant message concurrently for better performance
-    const userMessage = await ctx.runMutation(api.messages.createMessage, {
+  handler: async (ctx, { threadId, content, saveId }) => {
+
+    await ctx.runMutation(api.messages.createMessage, {
       threadId,
       role: 'user',
       content,
       isComplete: true,
     });
-    const assistantMessageId = await ctx.runMutation(api.messages.createMessage, {
+
+    const assistantMessageResult = await ctx.runMutation(api.messages.createMessage, {
       threadId,
       role: 'assistant',
       content: '',
       isComplete: false,
     });
 
-    // 2. Schedule the LLM job immediately
+    const assistantMessageId: Id<"messages"> = assistantMessageResult;
+
+    // 3. Schedule the LLM job immediately
     await ctx.scheduler.runAfter(0, internal.llm.generateAssistantMessage, {
       threadId,
       content,
       assistantMessageId,
-      worldId,
+      saveId,
     });
 
     return { assistantMessageId };
+  },
+});
+
+export const createMessage = mutation({
+  args: {
+    role: v.union(v.literal("user"), v.literal("assistant")),
+    threadId: v.id("messageThreads"),
+    isComplete: v.boolean(),
+    content: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const newMessageId = await ctx.db.insert("messages", {
+      threadId: args.threadId as Id<"messageThreads">,
+      role: args.role,
+      isComplete: args.isComplete
+    });
+
+    if (args.content) {
+      await ctx.db.insert("messageChunks", {
+        messageId: newMessageId,
+        content: args.content,
+      });
+    }
+
+    return newMessageId;
   },
 });`} />
       <H2>3. Generate the response in <code>internal.llm.generateAssistantMessage</code></H2>
@@ -195,84 +264,120 @@ export const startChatMessagePair = action({
       </UL>
       <SyntaxHighligherWrapper
 
-      text={`export const generateAssistantMessage = internalAction({
+      text={
+`// Minimum chunk size to reduce database writes
+const MIN_CHUNK_SIZE = 20;
+const FLUSH_INTERVAL = 200; // ms
+
+export const generateAssistantMessage = internalAction({
   args: {
     threadId: v.id("messageThreads"),
     content: v.string(),
     assistantMessageId: v.id("messages"),
-    worldId: v.id("worlds"),
+    saveId: v.id("saves"),
   },
 
   handler: async (ctx, args) => {
-    const [messages, characters] = await Promise.all([
-      ctx.runQuery(api.messages.getMessages, {
+    try {
+      const messages = await ctx.runQuery(api.messages.getMessages, {
         threadId: args.threadId,
-      }),
-      ctx.runQuery(api.playerCharacters.getByWorldId, {
-        worldId: args.worldId,
-      }),
-    ]);
-
-    const fullPrompt = [
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
-      { role: "user", content: args.content },
-    ];
-
-    console.log("Starting text generation...");
-
-    const result = streamText({
-      model: openai("gpt-4.1-mini"),
-      system: 
-\`You are a game master for a text-based RPG called Veilborn. 
-You are currently in a world with the following characters:
-\${JSON.stringify(characters)}
-\`,
-      messages: fullPrompt as CoreMessage[],
-    });
-
-    // Buffer incoming chunks to reduce write pressure. Flush to DB every 150ms.
-    let accumulated = "";
-    let buffer = "";
-    let flushTimeout: NodeJS.Timeout | null = null;
-
-    const flush = async () => {
-      if (!buffer) return;
-      accumulated += buffer;
-      buffer = "";
-
-      await ctx.runMutation(api.messages.update, {
-        messageId: args.assistantMessageId,
-        threadId: args.threadId,
-        role: "assistant",
-        content: accumulated,
-        isComplete: false,
       });
-    };
 
-    for await (const chunk of result.textStream) {
-      buffer += chunk;
+      const fullPrompt = [
+        ...messages.map((m) => ({ 
+          role: m.role, 
+          content: m.messageChunks.map(chunk => chunk.content).join('') 
+        })),
+        { role: "user", content: args.content },
+      ];
 
-      if (!flushTimeout) {
-        flushTimeout = setTimeout(async () => {
-          await flush();
-          flushTimeout = null;
-        }, 150);
+      const result = streamText({
+        model: openai("gpt-4.1-mini"),
+        system: \`You are helpful assistant.\`,
+        messages: fullPrompt as CoreMessage[],
+      });
+
+      let buffer = "";
+      let lastFlushTime = Date.now();
+      let flushTimeout: NodeJS.Timeout | null = null;
+
+      const flush = async (force = false) => {
+        if (!force && (buffer.length < MIN_CHUNK_SIZE || Date.now() - lastFlushTime < FLUSH_INTERVAL)) {
+          return;
+        }
+
+        if (buffer.length === 0) return;
+
+        const contentToFlush = buffer;
+        buffer = "";
+        flushTimeout = null;
+        lastFlushTime = Date.now();
+
+        try {
+          await ctx.runMutation(api.messages.createMessageChunk, {
+            messageId: args.assistantMessageId,
+            content: contentToFlush,
+          });
+        } catch (error) {
+          console.error("Failed to save message chunk:", error);
+          // In case of error, add content back to buffer
+          buffer = contentToFlush + buffer;
+          // Retry after a short delay
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          await flush(true);
+        }
+      };
+
+      for await (const chunk of result.textStream) {
+        if (chunk) {
+          buffer += chunk;
+          
+          // Schedule a flush if not already scheduled
+          if (!flushTimeout) {
+            flushTimeout = setTimeout(() => flush(), FLUSH_INTERVAL);
+          }
+          
+          // Force flush if buffer gets too large
+          if (buffer.length >= MIN_CHUNK_SIZE * 2) {
+            if (flushTimeout) {
+              clearTimeout(flushTimeout);
+              flushTimeout = null;
+            }
+            await flush(true);
+          }
+        }
       }
+
+      // Final cleanup
+      if (flushTimeout) {
+        clearTimeout(flushTimeout);
+      }
+      // Force flush any remaining content
+      await flush(true);
+
+      // Mark message as complete
+      await ctx.runMutation(api.messages.updateMessage, {
+        messageId: args.assistantMessageId,
+        isComplete: true,
+      });
+
+    } catch (error) {
+      console.error("Error in generateAssistantMessage:", error);
+      
+      // Mark message as complete but with error state
+      await ctx.runMutation(api.messages.updateMessage, {
+        messageId: args.assistantMessageId,
+        isComplete: true,
+      });
+      
+      // Add error message as final chunk
+      await ctx.runMutation(api.messages.createMessageChunk, {
+        messageId: args.assistantMessageId,
+        content: "\\n\\nI apologize, but I encountered an error while generating the response. Please try again.",
+      });
+      
+      throw error; // Re-throw to trigger Convex's error handling
     }
-
-    if (flushTimeout) clearTimeout(flushTimeout);
-    await flush();
-
-    // Final mark complete
-    await ctx.runMutation(api.messages.update, {
-      messageId: args.assistantMessageId,
-      threadId: args.threadId,
-      role: "assistant",
-      content: accumulated,
-      isComplete: true,
-    });
-
-    console.log("Text generation finished.");
   },
 });`} />
 
@@ -281,19 +386,56 @@ You are currently in a world with the following characters:
         Convex&#39;s <code>useQuery</code> is reactive, so it&#39;ll update as soon as the message is saved.
       </P>
       <SyntaxHighligherWrapper
-        text={`const messages = useQuery(api.messages.getMessages, { threadId });
-
-// ...
-return (
-  <div>
-    {messages?.map(message => (
-      <div key={message._id} className="whitespace-pre-wrap mb-2">
-        <strong>{message.role === 'user' ? 'User:' : 'AI:'}</strong> {message.content}
-        {!message.isComplete && message.role === 'assistant' && <span className="animate-pulse">▍</span>}
-      </div>
-    ))}
+        text={
+`
+// Memoized Message component to optimize re-renders
+const Message = memo(({ role, content, isComplete = true }: { 
+  role: 'user' | 'assistant', 
+  content: string, 
+  isComplete?: boolean 
+}) => (
+  <div className={cn(
+    "mb-4 flex w-full",
+    role === "assistant" ? "justify-start" : "justify-end"
+  )}>
+    <div className={cn(
+      "rounded-lg px-4 py-3",
+      role === "assistant" 
+        ? "w-full" 
+        : "max-w-[90%] bg-primary text-primary-foreground"
+    )}>
+      <Markdown>{content}</Markdown>
+      {!isComplete && (
+        <span className="inline-block h-4 w-1 animate-pulse bg-current" />
+      )}
+    </div>
   </div>
-);`} />
+));
+
+//...
+
+export default function Chat() {
+
+  const messages = useQuery(api.messages.getMessages, { 
+    threadId,
+    limit: MESSAGE_LIMIT
+  });
+
+  /* Rest of the chat code. */
+  return (
+    <div>
+    { /* ... */ }
+      {messages?.map(message => (
+        <Message
+          key={message._id}
+          role={message.role}
+          content={message.messageChunks.map(chunk => chunk.content).join('')}
+          isComplete={message.isComplete}
+        />
+      ))}
+    </div>
+  );
+}`} />
       <H2>Results</H2>
       <P>
         After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.

@@ -16,7 +16,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H2: React.FC<Props> = ({className, children}) => {
     return (
-      <h2 className={`scroll-m-20 border-b pb-1 pt-4 text-3xl font-semibold tracking-tight first:mt-0 break-words ${className}`}>
+      <h2 className={`scroll-m-20 border-b pb-1 pt-6 text-3xl font-semibold tracking-tight first:mt-0 break-words ${className}`}>
         {children}
       </h2>
     )
@@ -24,7 +24,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H3: React.FC<Props> = ({className, children}) => {
     return (
-      <h3 className={`scroll-m-20 text-2xl font-semibold tracking-tight break-words ${className}`}>
+      <h3 className={`scroll-m-20 text-2xl pt-6 font-semibold tracking-tight break-words ${className}`}>
         {children}
       </h3>
     )
@@ -33,7 +33,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const H4: React.FC<Props> = ({className, children}) => {
     return (
-      <h4 className={`scroll-m-20 text-xl font-semibold tracking-tight break-words ${className}`}>
+      <h4 className={`scroll-m-20 text-xl pt-6 font-semibold tracking-tight break-words ${className}`}>
         {children}
       </h4>
     )
