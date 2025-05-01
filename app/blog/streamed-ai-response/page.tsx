@@ -108,25 +108,25 @@ export default function StreamedAIResponsePost() {
 
       <H1 className='mt-8'>The Solution</H1>
       <P>
-        Here's a breif overview of the solution I came up with. I'll go into more detail in the next section.
+        Here&#39;s a breif overview of the solution I came up with. I&#39;ll go into more detail in the next section.
       </P>
       <UL>
         <LI>Define your message schema</LI>
         <LI>Start the chat with <code>startChatMessagePair</code></LI>
-        <LI>Save the user's message and initiate the LLM response</LI>
+        <LI>Save the user&#39;s message and initiate the LLM response</LI>
         <LI>Generate the response in <code>internal.llm.generateAssistantMessage</code></LI>
         <LI>Use <code>useQuery</code> to stream the response</LI>
       </UL>
 
       <P>
-        We're going to store the message chunks in the database, 
-        but we're going to stream the tokens to the client as soon as they're generated.
+        We&#39;re going to store the message chunks in the database, 
+        but we&#39;re going to stream the tokens to the client as soon as they&#39;re generated.
       </P>
 
       <H2>1. Define your message schema</H2>
       <P>
-        This is the schema I used for the chat. We're going to need a message thread, a message, and a message chunk.
-        The message thread is just a title. The message is the user's message or the AI's response. The message chunk is a chunk of the AI's response.
+        This is the schema I used for the chat. We&#39;re going to need a message thread, a message, and a message chunk.
+        The message thread is just a title. The message is the user&#39;s message or the AI&#39;s response. The message chunk is a chunk of the AI&#39;s response.
       </P>
       <SyntaxHighligherWrapper
         text={
