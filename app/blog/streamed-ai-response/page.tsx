@@ -387,8 +387,7 @@ export const generateAssistantMessage = internalAction({
       </P>
       <SyntaxHighligherWrapper
         text={
-`
-// Convex query:
+`// Convex query:
 export const getMessages = query({
   args: { 
     threadId: v.id("messageThreads"),
@@ -428,9 +427,7 @@ export const getMessages = query({
   },
 });
 
-
-
-// Client component
+// Client component:
 // Memoized Message component to optimize re-renders
 const Message = memo(({ role, content, isComplete = true }: { 
   role: 'user' | 'assistant', 
