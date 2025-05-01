@@ -260,7 +260,7 @@ export const createMessage = mutation({
         <LI>Uses <code>streamText()</code> from the Vercel AI SDK</LI>
         <LI>Streams tokens with <code>for await...of result.textStream</code></LI>
         <LI>Keeps them in memory</LI>
-        <LI>Saves to Convex every 150ms</LI>
+        <LI>Saves to Convex every 200ms</LI>
       </UL>
       <SyntaxHighligherWrapper
 
@@ -479,7 +479,7 @@ export default function Chat() {
       <H2>Results</H2>
       <P>
         After implementing this solution, I was able to achieve a simple implementation that provides a streaming feel even after disconnects while maintaining controlled database load.
-        The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 150ms.
+        The system maintains message history, handles disconnects gracefully, and provides a smooth streaming experience without overwhelming the database since we capped the update rate at 200ms.
       </P>
 
       <div className="flex flex-col items-center mt-4 w-full">
