@@ -137,13 +137,13 @@ export default function StreamedAIResponsePost() {
 const messageChunks = defineTable({
   content: v.string(),
   messageId: v.id("messages"),
-}).index("by_messageId_and_creationTime", ["messageId", "_creationTime"]);
+}).index("by_messageId", ["messageId""]);
 
 const messages = defineTable({
   isComplete: v.optional(v.boolean()),
   role: v.union(v.literal("user"), v.literal("assistant")),
   threadId: v.id("messageThreads"),
-}).index("by_threadId_and_creationTime", ["threadId", "_creationTime"]);
+}).index("by_threadId", ["threadId"]);
 
 const userSettings = defineTable({
   userId: v.id("users"),
@@ -388,6 +388,49 @@ export const generateAssistantMessage = internalAction({
       <SyntaxHighligherWrapper
         text={
 `
+// Convex query:
+export const getMessages = query({
+  args: { 
+    threadId: v.id("messageThreads"),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    // Get the most recent messages first, limited if specified
+    const query = ctx.db
+      .query("messages")
+      .withIndex("by_threadId", (q) => 
+        q.eq("threadId", args.threadId)
+      )
+      .order("desc");
+
+    const messages = await (args.limit ? query.take(args.limit) : query.collect());
+    messages.reverse(); // Put them back in chronological order
+
+    // Fetch chunks for each message
+    const messagesWithChunks = await Promise.all(
+      messages.map(async (message) => {
+        const chunks = await ctx.db
+          .query("messageChunks")
+          .withIndex("by_messageId", (q) => 
+            q.eq("messageId", message._id)
+          )
+          .order("asc")
+          .collect();
+        
+        return {
+          ...message,
+          messageChunks: chunks
+        };
+      })
+    );
+
+    return messagesWithChunks;
+  },
+});
+
+
+
+// Client component
 // Memoized Message component to optimize re-renders
 const Message = memo(({ role, content, isComplete = true }: { 
   role: 'user' | 'assistant', 
