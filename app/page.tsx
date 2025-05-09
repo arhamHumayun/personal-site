@@ -23,5 +23,3 @@ export default function Home() {
     </div>
   );
 }
-
-// 6cd0ce0a-aece-459a-a95b-e52e717ee1cf
