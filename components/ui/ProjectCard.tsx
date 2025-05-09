@@ -12,11 +12,11 @@ interface ProjectCardProps {
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ title, img, desc, url }) => (
   <Link href={url} prefetch={true} className="block">
-    <Card className="min-h-[400px] h-[400px] flex flex-col justify-between px-2">
-      <div className="relative w-full max-w-[220px] p-1 mx-auto">
-        <Image src={img} alt={title} width={220} height={140} className="object-contain rounded-md" />
+    <Card className="min-h-[400px] h-[400px] flex flex-col justify-between p-6">
+      <div className="relative w-full aspect-[16/9]">
+        <Image src={img} alt={title} fill className="object-cover rounded-md" />
       </div>
-      <CardContent className="flex flex-col items-start w-full mt-4">
+      <CardContent className="flex flex-col items-start w-full mt-4 p-0">
         <CardHeader className="p-0 pb-1 flex flex-col items-start w-full">
           <CardTitle>{title}</CardTitle>
         </CardHeader>

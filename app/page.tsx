@@ -18,6 +18,9 @@ export default function Home() {
           <Link href="/contact" prefetch={true} className="text-primary hover:underline">
             Get in touch
           </Link>
+          <Link href="/favorites" prefetch={true} className="text-primary hover:underline">
+            Favorites
+          </Link>
         </div>
       </div>
     </div>
