@@ -91,7 +91,6 @@ const H1: React.FC<Props> = ({className, children}) => {
   const A: React.FC<Props & { href?: string }> = ({ className, children, href }) => {
     return (
       <Link
-        prefetch={true}
         href={href || '#'}
         className={`font-medium text-primary underline ${className}`}
       >

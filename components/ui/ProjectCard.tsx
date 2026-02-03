@@ -11,7 +11,7 @@ interface ProjectCardProps {
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ title, img, desc, url }) => (
-  <Link href={url} prefetch={true} className="block">
+  <Link href={url} className="block">
     <Card className="min-h-[400px] h-[400px] flex flex-col justify-between p-6">
       <div className="relative w-full aspect-[16/9]">
         <Image src={img} alt={title} fill className="object-cover rounded-md" />

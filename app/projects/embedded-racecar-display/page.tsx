@@ -30,7 +30,6 @@ export default function EmbeddedRacecarDisplay() {
       >
         <Link
           href="https://github.com/UCalgaryRacing/STMDisplay"
-          prefetch={true}
           target="_blank"
         >
           View on GitHub

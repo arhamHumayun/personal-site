@@ -54,14 +54,14 @@ const GITHUB_SVG = () => {
 export function Footer() {
   return (
     <div className="w-full bg-background">
-      <div className="flex justify-center space-x-4 p-4 max-w-7xl mx-auto">
-        <Link href="https://x.com/arham_humayun99" prefetch={true} target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+      <div className="flex justify-center space-x-4 py-4 px-4 sm:px-6 max-w-5xl mx-auto">
+        <Link href="https://x.com/arham_humayun99" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
           <X_SVG />
         </Link>
-        <Link href="https://linkedin.com/in/arham-humayun" prefetch={true} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+        <Link href="https://linkedin.com/in/arham-humayun" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
           <LINKEDIN_SVG />
         </Link>
-        <Link href="https://github.com/arhamHumayun" prefetch={true} target="_blank" rel="noopener noreferrer" aria-label="Github" title="Github">
+        <Link href="https://github.com/arhamHumayun" target="_blank" rel="noopener noreferrer" aria-label="Github" title="Github">
           <GITHUB_SVG />
         </Link>
       </div>

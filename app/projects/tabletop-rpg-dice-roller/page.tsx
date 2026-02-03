@@ -29,7 +29,6 @@ export default function TabletopRPGDiceRoller() {
         >
           <Link
             href="https://arhamhumayun.github.io/Tabletop-Helper/#/dice"
-            prefetch={true}
             target="_blank"
         >
           Try the Dice Roller

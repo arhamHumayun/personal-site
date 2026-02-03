@@ -32,7 +32,6 @@ export default function Minesweeper() {
         >
           <Link
             href="https://github.com/arhamHumayun/Minesweeper"
-            prefetch={true}
           >
             View on GitHub
           </Link>

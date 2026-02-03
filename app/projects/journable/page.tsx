@@ -29,7 +29,6 @@ export default function Journable() {
       >
         <Link
           href="https://devpost.com/software/journable"
-          prefetch={true}
           target="_blank"
         >
           View on Devpost

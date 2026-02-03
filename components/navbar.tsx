@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "./ui/navigation-menu";
 import { Button } from "./ui/button";
-import { H4 } from "./typography";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 
@@ -30,10 +29,10 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between p-2 sm:p-4 z-50 bg-background w-full max-w-5xl mx-auto">
+    <div className="flex flex-col sm:flex-row items-center justify-between py-2 sm:py-4 px-4 sm:px-6 z-50 bg-background w-full max-w-5xl mx-auto">
       <div className="flex items-center justify-between w-full sm:w-auto">
-        <Link href="/" prefetch={true} className="font-bold text-sm sm:text-lg">
-          <H4>Arham Humayun</H4>
+        <Link href="/" className="font-semibold text-base sm:text-lg leading-none">
+          <span className="block">Arham Humayun</span>
         </Link>
         <Button
           variant="ghost"
@@ -50,7 +49,7 @@ export function Navbar() {
           {navItems.map((item) => (
             <NavigationMenuItem key={item.label}>
               <Button variant="ghost" size="sm" asChild className="w-full sm:w-auto">
-                <Link href={item.href} prefetch={true} className="text-xs sm:text-sm">
+                <Link href={item.href} className="text-xs sm:text-sm">
                   {item.label}
                 </Link>
               </Button>

@@ -78,7 +78,6 @@ export default async function Blog() {
           sortedPosts.map((post, idx) => (
             <Link
               href={`/blog/${post.slug}`}
-              prefetch={true}
               key={post.slug}
               className="block rounded-lg transition-colors w-full focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
             >
