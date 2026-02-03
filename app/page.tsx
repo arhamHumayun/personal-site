@@ -7,8 +7,7 @@ export default function Home() {
       <H1>Hey there! 👋</H1>
       <P>
       I{`'`}m Arham Humayun, a Full-Stack Engineer passionate about APIs, React/Next.js, AI, and distributed systems.
-      Currently working at <A href="https://blurb.fm">blurb.fm</A>, 
-      a small startup that scales video creation to power music companies.
+      Currently working at <A href="https://paceline.fit">paceline.fit</A>.
       </P>
       <P>
       I shipped <A href="https://monsterlabs.app">monsterlabs.app</A> as a side project. It{`'`}s a revenue generating SaaS that helps DnD players create their own monsters using AI.
