@@ -7,7 +7,7 @@ export default function Home() {
       <H1 className="text-center">Hey there! 👋</H1>
       <P>
       I{`'`}m Arham Humayun, a Full-Stack Engineer passionate about APIs, React/Next.js, AI, and distributed systems.
-      Currently working at <A href="https://paceline.fit">paceline.fit</A>.
+      I currently work at <A href="https://paceline.fit">Paceline</A> as a Full-Stack Engineer.
       </P>
       <P>
       I shipped <A href="https://monsterlabs.app">monsterlabs.app</A> as a side project. It{`'`}s a revenue generating SaaS that helps DnD players create their own monsters using AI.
