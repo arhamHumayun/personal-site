@@ -19,10 +19,6 @@ const navItems = [
     label: "Contact",
     href: "/contact",
   },
-  {
-    label: "Favorites",
-    href: "/favorites",
-  },
 ];
 
 export function Navbar() {
