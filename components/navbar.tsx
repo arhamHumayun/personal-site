@@ -44,7 +44,7 @@ export function Navbar() {
         <NavigationMenuList className="flex-col sm:flex-row gap-1 sm:gap-2">
           {navItems.map((item) => (
             <NavigationMenuItem key={item.label}>
-              <Button variant="ghost" size="sm" asChild className="w-full sm:w-auto">
+              <Button variant="link" size="sm" asChild className="w-full sm:w-auto">
                 <Link href={item.href} className="text-xs sm:text-sm">
                   {item.label}
                 </Link>
