@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 export const metadata = {
   title: "Embedded Racecar Display",
+  cardDescription: "STM32 embedded-C dashboard for car telemetry.",
   description: "Programmed a race car dashboard in embedded C using STM32 chipset with ARM processor for car diagnosis and racing display. Optimized performance through custom drawing and refreshing implementations.",
   img: "/images/stm32.webp",
   url: "https://github.com/UCalgaryRacing/STMDisplay",

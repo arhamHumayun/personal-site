@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 export const metadata = {
   title: "Journable",
+  cardDescription: "AI-assisted journaling — Calgary Hacks 2022.",
   description: "Winner of Best use of Machine Learning at the 2022 Calgary Hacks Hackathon. A modern journaling application powered by AI and machine learning to make writing journals more accessible for everyone.",
   img: "/images/journable.webp",
   url: "https://devpost.com/software/journable",

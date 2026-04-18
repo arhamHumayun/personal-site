@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: "Race Telemetry Dashboard",
+  cardDescription: "Go APIs and a React dashboard for race telemetry.",
   description: "Created REST APIs in Go with MongoDB to add race car and user information, delivering historical and real-time data with user permissions. Built the front-end dashboard using TypeScript, React and Bootstrap.",
   img: "/images/sr.webp",
   url: "https://github.com/UCalgaryRacing/STMDisplay",

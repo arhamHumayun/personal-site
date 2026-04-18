@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 export const metadata = {
   title: "Minesweeper",
+  cardDescription: "Classic Minesweeper in Python and Pygame.",
   description: "A complete remake of the classic Minesweeper game built with Pygame. One of my first projects exploring game development and Python programming.",
   img: "/images/minesweeper.webp",
   url: "https://github.com/arhamHumayun/Minesweeper",
@@ -21,9 +22,8 @@ export default function Minesweeper() {
       />
       <div className="text-gray-700 dark:text-gray-300">
         <P>
-          A complete remake of the classic Minesweeper game built with Pygame. 
+          A complete remake of the classic Minesweeper game built with Pygame. Built mostly in one day.
           One of my first projects exploring game development and Python programming.
-          I built this game in 2020 when I was first learning Python and game programming so the code is a little questionable.
         </P>
         <Button
           asChild

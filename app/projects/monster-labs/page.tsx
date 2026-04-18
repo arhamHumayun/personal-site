@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: "Monster Labs",
+  cardDescription: "D&D monsters, characters, and items — live SaaS.",
   description: "Monster Labs is a SaaS platform that helps you create Dungeons & Dragons monsters, characters, and magic items. Live and serving real customers!",
   img: "/images/monsterlabs.webp",
   url: "https://monsterlabs.app",

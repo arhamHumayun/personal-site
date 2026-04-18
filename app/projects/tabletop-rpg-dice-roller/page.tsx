@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: "Tabletop RPG Dice Roller",
+  cardDescription: "Dice roller and character builder in React.",
   description: "One of my first projects! A tabletop RPG dice roller and character builder built with React and Bootstrap. It's a simple and easy to use dice roller for your tabletop RPG needs.",
   img: "/images/tth.webp",
   url: "https://arhamhumayun.github.io/Tabletop-Helper/#/dice"
