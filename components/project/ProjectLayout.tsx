@@ -6,7 +6,7 @@ interface ProjectLayoutProps {
 
 export const ProjectLayout: React.FC<ProjectLayoutProps> = ({ children }) => {
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-8">
+    <article className="w-full">
       {children}
     </article>
   );

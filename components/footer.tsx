@@ -52,19 +52,26 @@ const GITHUB_SVG = () => {
 }
 
 export function Footer() {
+  const year = new Date().getFullYear();
+
   return (
-    <div className="w-full bg-background">
-      <div className="flex justify-center space-x-4 py-4 px-4 sm:px-6 max-w-5xl mx-auto">
-        <Link href="https://x.com/arham_humayun99" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
-          <X_SVG />
-        </Link>
-        <Link href="https://linkedin.com/in/arham-humayun" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
-          <LINKEDIN_SVG />
-        </Link>
-        <Link href="https://github.com/arhamHumayun" target="_blank" rel="noopener noreferrer" aria-label="Github" title="Github">
-          <GITHUB_SVG />
-        </Link>
+    <footer className="w-full bg-background pb-8 pt-2">
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex justify-center space-x-4">
+          <Link href="https://x.com/arham_humayun99" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+            <X_SVG />
+          </Link>
+          <Link href="https://linkedin.com/in/arham-humayun" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+            <LINKEDIN_SVG />
+          </Link>
+          <Link href="https://github.com/arhamHumayun" target="_blank" rel="noopener noreferrer" aria-label="Github" title="Github">
+            <GITHUB_SVG />
+          </Link>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          © {year} Arham Humayun
+        </p>
       </div>
-    </div>
+    </footer>
   );
 }

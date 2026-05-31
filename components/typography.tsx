@@ -51,7 +51,7 @@ const H1: React.FC<Props> = ({className, children}) => {
 
   const Blockquote: React.FC<Props> = ({className, children}) => {
     return (
-      <blockquote className={`mt-6 border-l-2 pl-6 italic ${className}`}>
+      <blockquote className={`mt-6 border-l-2 border-l-link/50 pl-6 italic ${className}`}>
         {children}
       </blockquote>
     )
@@ -92,7 +92,7 @@ const H1: React.FC<Props> = ({className, children}) => {
     return (
       <Link
         href={href || '#'}
-        className={`font-medium text-primary underline ${className}`}
+        className={`font-medium text-link underline-offset-4 decoration-link/40 hover:underline hover:decoration-link ${className}`}
       >
         {children}
       </Link>

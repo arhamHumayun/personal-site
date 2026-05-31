@@ -10,7 +10,6 @@ export const metadata = {
   description: "Monster Labs is a SaaS platform that helps you create Dungeons & Dragons monsters, characters, and magic items. Live and serving real customers!",
   img: "/images/monsterlabs.webp",
   url: "https://monsterlabs.app",
-  badge: "SaaS"
 };
 
 export default function MonsterLabs() {

@@ -11,7 +11,6 @@ export const metadata = {
     "A fast top-down twin-stick shooter built in Godot: survive waves, pick upgrades each level, use abilities and drive forms, and spend meta gold between runs. Playable in the browser on itch.io.",
   img: "/images/tiny-ship.png",
   url: "https://arham99.itch.io/tiny-ship",
-  badge: "Game Development",
 };
 
 export default function TinyShip() {

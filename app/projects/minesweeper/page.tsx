@@ -9,7 +9,6 @@ export const metadata = {
   description: "A complete remake of the classic Minesweeper game built with Pygame. One of my first projects exploring game development and Python programming.",
   img: "/images/minesweeper.webp",
   url: "https://github.com/arhamHumayun/Minesweeper",
-  badge: "Game Development"
 };
 
 export default function Minesweeper() {

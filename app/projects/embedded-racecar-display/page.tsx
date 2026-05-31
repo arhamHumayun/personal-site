@@ -9,7 +9,6 @@ export const metadata = {
   description: "Programmed a race car dashboard in embedded C using STM32 chipset with ARM processor for car diagnosis and racing display. Optimized performance through custom drawing and refreshing implementations.",
   img: "/images/stm32.webp",
   url: "https://github.com/UCalgaryRacing/STMDisplay",
-  badge: "Embedded"
 };
 
 export default function EmbeddedRacecarDisplay() {

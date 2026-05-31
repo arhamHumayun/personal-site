@@ -9,7 +9,6 @@ export const metadata = {
   description: "Winner of Best use of Machine Learning at the 2022 Calgary Hacks Hackathon. A modern journaling application powered by AI and machine learning to make writing journals more accessible for everyone.",
   img: "/images/journable.webp",
   url: "https://devpost.com/software/journable",
-  badge: "Hackathon"
 };
 
 export default function Journable() {

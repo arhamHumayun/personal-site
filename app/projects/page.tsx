@@ -1,4 +1,3 @@
-import { H1 } from "@/components/typography";
 import ProjectCard from "@/components/ui/ProjectCard";
 import fs from "fs";
 import path from "path";
@@ -41,10 +40,10 @@ export default async function Projects() {
   const projects = await Promise.all(slugs.map(slug => getProjectMetadata(slug)));
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <H1 className="mb-5 px-4">My Projects</H1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
-        {projects.map(project => (
+    <div className="w-full">
+      <h1 className="sr-only">Projects</h1>
+      <div>
+        {projects.map((project) => (
           <ProjectCard
             key={project.slug}
             title={project.title}
