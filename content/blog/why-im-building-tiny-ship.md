@@ -1,6 +1,6 @@
 ---
 title: "Why I'm Building Tiny Ship"
-description: "How influences like Kingdom Hearts 2, Doom Eternal, and Vampire Survivors shaped a twin-stick shooter I can actually finish"
+description: "How my favorite games shaped a twin-stick shooter that you can actually play today"
 date: "2026-05-31"
 ---
 
@@ -53,4 +53,4 @@ So that's where Tiny Ship sits right now. It's not trying to be my "dream game" 
 
 As for Veilborn, I got what I wanted from it technically and mechanically for now. Other design problems around structure and world state became more interesting than continuing it immediately, so it's currently parked. I'll likely return to it once the design direction is clearer.
 
-Check out Tiny Ship on itch.io: [https://arham99.itch.io/tiny-ship](https://arham99.itch.io/tiny-ship)
+Check out Tiny Ship on itch.io! [https://arham99.itch.io/tiny-ship](https://arham99.itch.io/tiny-ship)
