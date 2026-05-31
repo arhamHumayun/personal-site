@@ -29,7 +29,7 @@ export function Navbar() {
           Arham Humayun
         </Link>
         <p
-          className="mt-0.5 font-mono text-[10px] tracking-wide text-muted-foreground"
+          className="mt-0.5 font-mono text-xs tracking-wide text-muted-foreground"
           aria-label={`Current location: ${currentPath}`}
         >
           {currentPath}
@@ -48,7 +48,7 @@ export function Navbar() {
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href !== "/" && pathname.startsWith(item.href));
+                pathname.startsWith(`${item.href}/`);
 
               return (
                 <NavigationMenuItem key={item.label}>
