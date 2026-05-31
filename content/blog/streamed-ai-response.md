@@ -42,7 +42,7 @@ Saving every token chunk to Convex is too many writes. A job queue could help, b
 
 # The Solution
 
-Here's a breif overview of the solution I came up with. I'll go into more detail in the next section.
+Here's a brief overview of the solution I came up with. I'll go into more detail in the next section.
 
 - Define your message schema
 - Start the chat with `startChatMessagePair`
