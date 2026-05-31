@@ -18,7 +18,6 @@ export function WritingPostList({ posts }: WritingPostListProps) {
           <WritingPostLink
             slug={post.slug}
             title={post.title}
-            description={post.description}
             date={post.date}
           />
           {index < posts.length - 1 && (

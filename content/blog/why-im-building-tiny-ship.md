@@ -1,6 +1,5 @@
 ---
 title: "Why I'm Building Tiny Ship"
-description: "How my favorite games shaped a twin-stick shooter that you can actually play today"
 date: "2026-05-31"
 ---
 

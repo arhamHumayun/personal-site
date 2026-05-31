@@ -33,7 +33,6 @@ export async function generateMetadata({
 
   return {
     title: post.title,
-    description: post.description,
   };
 }
 
@@ -49,7 +48,6 @@ export default async function MarkdownBlogPostPage({ params }: PageProps) {
     <BlogPostLayout>
       <BlogPostHeader
         title={post.title}
-        description={post.description}
         date={post.date}
         heroImage={post.heroImage}
       />

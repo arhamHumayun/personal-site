@@ -5,7 +5,6 @@ import matter from "gray-matter";
 export type BlogPostMetadata = {
   slug: string;
   title: string;
-  description: string;
   date: string;
   heroImage?: string;
 };
@@ -60,7 +59,6 @@ export async function getTsxPostMetadata(
     return {
       slug,
       title: metadata.title ?? slug.replace(/-/g, " "),
-      description: metadata.description ?? "No description provided.",
       date: metadata.date ?? "",
       heroImage: metadata.heroImage,
     };
@@ -82,7 +80,6 @@ export function getMarkdownPost(slug: string): MarkdownPost | null {
   return {
     slug,
     title: data.title ?? slug.replace(/-/g, " "),
-    description: data.description ?? "No description provided.",
     date: data.date ?? "",
     heroImage: data.heroImage,
     content,

@@ -1,6 +1,5 @@
 ---
 title: "Building Better AI Applications with Structured Output"
-description: "How I built MonsterLabs using structured object generation and what I learned about building SaaS products"
 date: "2024-12-21"
 heroImage: "/images/monsterlabs.webp"
 ---

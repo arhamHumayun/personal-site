@@ -1,6 +1,5 @@
 ---
 title: "Unbreakable AI Chat: Streaming Responses with Convex + Vercel AI SDK"
-description: "How I built a persistent, reliable chat system with Convex and the AI SDK"
 date: "2025-04-30"
 ---
 

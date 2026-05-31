@@ -1,16 +1,15 @@
 import React from "react";
 import Image from "next/image";
-import { H1, P } from "@/components/typography";
+import { H1 } from "@/components/typography";
 import { PostDate } from "@/components/ui/post-date";
 
 interface BlogPostHeaderProps {
   title: string;
-  description: string;
   date: string;
   heroImage?: string;
 }
 
-export const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ title, description, date, heroImage }) => {
+export const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ title, date, heroImage }) => {
   return (
     <div className="mb-8"> {/* Add some bottom margin */}
       {/* Optional: Display Hero Image */}
@@ -28,7 +27,6 @@ export const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ title, descripti
       )}
 
       <H1 className='mt-4'>{title}</H1>
-      <P className="text-muted-foreground text-lg">{description}</P>
       <div className="mt-4 flex items-center gap-2 meta-label">
         <span className="text-link/70">DATE</span>
         <span className="text-border" aria-hidden>
