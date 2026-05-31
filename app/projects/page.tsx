@@ -1,4 +1,4 @@
-import ProjectCard from "@/components/ui/ProjectCard";
+import { ProjectGrid } from "@/components/list/ProjectGrid";
 import fs from "fs";
 import path from "path";
 
@@ -16,43 +16,47 @@ function sortProjectSlugs(slugs: string[]) {
   });
 }
 
-// Get all project slugs (folder names)
 async function getProjectSlugs() {
   const projectsDirectory = path.join(process.cwd(), "app/projects");
-  const dirents = await fs.promises.readdir(projectsDirectory, { withFileTypes: true });
-  const slugs = dirents.filter(d => d.isDirectory() && !d.name.startsWith("."))
-    .map(d => d.name);
+  const dirents = await fs.promises.readdir(projectsDirectory, {
+    withFileTypes: true,
+  });
+  const slugs = dirents
+    .filter((d) => d.isDirectory() && !d.name.startsWith("."))
+    .map((d) => d.name);
   return sortProjectSlugs(slugs);
 }
 
-// Get metadata for a single project
 async function getProjectMetadata(slug: string) {
   try {
     const mod = await import(`./${slug}/page`);
     return { slug, ...mod.metadata };
   } catch {
-    return { slug, title: slug, description: "No description.", img: "", url: "" };
+    return {
+      slug,
+      title: slug,
+      description: "No description.",
+      img: "",
+      url: "",
+    };
   }
 }
 
 export default async function Projects() {
   const slugs = await getProjectSlugs();
-  const projects = await Promise.all(slugs.map(slug => getProjectMetadata(slug)));
+  const projects = await Promise.all(slugs.map((slug) => getProjectMetadata(slug)));
+
+  const gridProjects = projects.map((project) => ({
+    slug: project.slug,
+    title: project.title,
+    description: project.cardDescription ?? project.description,
+    img: project.img,
+  }));
 
   return (
     <div className="w-full">
       <h1 className="sr-only">Projects</h1>
-      <div>
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.slug}
-            title={project.title}
-            img={project.img}
-            desc={project.cardDescription ?? project.description}
-            url={`/projects/${project.slug}`}
-          />
-        ))}
-      </div>
+      <ProjectGrid projects={gridProjects} showIndex />
     </div>
   );
 }

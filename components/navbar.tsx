@@ -2,37 +2,39 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "./ui/navigation-menu";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+} from "./ui/navigation-menu";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const navItems = [
-  {
-    label: "Writing",
-    href: "/blog",
-  },
-  {
-    label: "Projects",
-    href: "/projects",
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
-];
+import { getCurrentNavPath, navItems } from "@/lib/nav-path";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const currentPath = getCurrentNavPath(pathname);
 
   return (
-    <div className="relative flex items-center justify-between py-4 z-50 bg-background w-full">
-      <Link href="/" className="font-semibold text-lg leading-none shrink-0">
-        Arham Humayun
-      </Link>
+    <div className="relative flex items-center justify-between py-4 z-50 bg-background/95 backdrop-blur-sm w-full border-b border-border/50">
+      <div className="leading-none shrink-0">
+        <Link
+          href="/"
+          className="font-semibold text-lg hover:text-link/90 transition-colors"
+        >
+          Arham Humayun
+        </Link>
+        <p
+          className="mt-0.5 font-mono text-[10px] tracking-wide text-muted-foreground"
+          aria-label={`Current location: ${currentPath}`}
+        >
+          {currentPath}
+        </p>
+      </div>
 
       <div className="flex items-center gap-1">
         <NavigationMenu
@@ -42,35 +44,49 @@ export function Navbar() {
             "max-[479px]:absolute max-[479px]:left-0 max-[479px]:right-0 max-[479px]:top-full max-[479px]:flex-col max-[479px]:bg-background max-[479px]:border-b max-[479px]:py-3"
           )}
         >
-        <NavigationMenuList className="max-[479px]:flex-col max-[479px]:items-start min-[480px]:flex-row gap-2">
-          {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+          <NavigationMenuList className="max-[479px]:flex-col max-[479px]:items-start min-[480px]:flex-row gap-0">
+            {navItems.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== "/" && pathname.startsWith(item.href));
 
-            return (
-            <NavigationMenuItem key={item.label}>
-              <Button variant="link" size="sm" asChild className="max-[479px]:w-full min-[480px]:w-auto">
-                <Link
-                  href={item.href}
-                  className={cn(
-                    "text-sm text-muted-foreground transition-colors",
-                    isActive
-                      ? "text-link font-medium"
-                      : "hover:text-foreground"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  {item.label}
-                </Link>
-              </Button>
-            </NavigationMenuItem>
-            );
-          })}
-        </NavigationMenuList>
+              return (
+                <NavigationMenuItem key={item.label}>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    asChild
+                    className="max-[479px]:w-full min-[480px]:w-auto px-2"
+                  >
+                    <Link
+                      href={item.href}
+                      className={cn(
+                        "text-sm transition-colors inline-flex items-center gap-0.5",
+                        isActive
+                          ? "text-link font-medium"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                      onClick={() => setIsOpen(false)}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      <span
+                        className={cn(
+                          "inline-flex w-[0.5rem] shrink-0 justify-center font-mono text-[9px] leading-none",
+                          isActive ? "text-link" : "invisible"
+                        )}
+                        aria-hidden
+                      >
+                        ■
+                      </span>
+                      {item.label}
+                    </Link>
+                  </Button>
+                </NavigationMenuItem>
+              );
+            })}
+          </NavigationMenuList>
         </NavigationMenu>
-        <ThemeToggle />
+        <ThemeToggle className="min-[480px]:ml-4" />
         <Button
           variant="ghost"
           size="sm"

@@ -1,6 +1,7 @@
-import React from 'react';
-import Image from 'next/image';
-import { H1, P } from '@/components/typography'; // Assuming these are appropriate
+import React from "react";
+import Image from "next/image";
+import { H1, P } from "@/components/typography";
+import { PostDate } from "@/components/ui/post-date";
 
 interface BlogPostHeaderProps {
   title: string;
@@ -28,7 +29,13 @@ export const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ title, descripti
 
       <H1 className='mt-4'>{title}</H1>
       <P className="text-muted-foreground text-lg">{description}</P>
-      <P className="text-sm text-muted-foreground">Published on: {date}</P>
+      <div className="mt-4 flex items-center gap-2 meta-label">
+        <span className="text-link/70">DATE</span>
+        <span className="text-border" aria-hidden>
+          ·
+        </span>
+        <PostDate date={date} variant="compact" className="text-foreground/70" />
+      </div>
     </div>
   );
 }; 

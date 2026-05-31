@@ -6,6 +6,7 @@ interface FeaturedProjectProps {
   description: string;
   img: string;
   href: string;
+  index?: number;
 }
 
 export function FeaturedProject({
@@ -13,10 +14,16 @@ export function FeaturedProject({
   description,
   img,
   href,
+  index,
 }: FeaturedProjectProps) {
   return (
     <Link href={href} className="group block">
-      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg border border-border transition-colors duration-300 group-hover:border-link/35">
+      {index !== undefined && (
+        <p className="meta-label text-muted-foreground mb-2">
+          [{String(index).padStart(2, "0")}]
+        </p>
+      )}
+      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-md border border-border lcd-bezel transition-colors duration-300 group-hover:border-link/35">
         <Image
           src={img}
           alt={title}

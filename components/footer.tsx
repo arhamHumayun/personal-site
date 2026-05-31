@@ -68,8 +68,12 @@ export function Footer() {
             <GITHUB_SVG />
           </Link>
         </div>
-        <p className="text-xs text-muted-foreground">
-          © {year} Arham Humayun
+        <p className="meta-label tabular-nums">
+          <span>Arham Humayun</span>
+          <span className="mx-2 text-border" aria-hidden>
+            ·
+          </span>
+          <span>© {year}</span>
         </p>
       </div>
     </footer>
