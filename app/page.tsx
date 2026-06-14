@@ -5,7 +5,7 @@ import { WritingPostList } from "@/components/list/WritingPostList";
 import { getAllPostsMetadata } from "@/lib/blog";
 import Link from "next/link";
 
-const FEATURED_SLUGS = ["tiny-ship", "monster-labs"];
+const FEATURED_SLUGS = ["tiny-ship", "monster-labs", "veilborn"];
 
 async function getFeaturedProjects() {
   return Promise.all(
