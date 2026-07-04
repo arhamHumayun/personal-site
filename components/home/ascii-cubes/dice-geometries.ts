@@ -2,11 +2,9 @@ import * as THREE from "three";
 
 export type DieType = "d20" | "d12" | "d10" | "d8" | "d6" | "d4";
 
-/** Top-left to bottom-right in a 2×3 grid */
-export const DICE_STACK: DieType[] = ["d20", "d12", "d10", "d8", "d6", "d4"];
-
+export const DICE_TYPES: DieType[] = ["d20", "d12", "d10", "d8", "d6", "d4"];
 export const DIE_RADIUS = 0.88;
-export const DICE_GRID_COLUMNS = 2;
+export const DIE_SPACING = 0.35;
 
 function createD10Geometry(radius: number): THREE.BufferGeometry {
   const angleStep = (Math.PI * 2) / 5;
@@ -53,7 +51,6 @@ export function createDieGeometry(type: DieType, radius: number): THREE.BufferGe
     case "d8":
       return new THREE.OctahedronGeometry(radius, 0);
     case "d6": {
-      // Match circumscribed sphere to other polyhedra
       const side = (radius * 2) / Math.sqrt(3);
       return new THREE.BoxGeometry(side, side, side);
     }
@@ -62,64 +59,68 @@ export function createDieGeometry(type: DieType, radius: number): THREE.BufferGe
   }
 }
 
-export function layoutDiceColumn(
-  types: DieType[],
-  radius: number,
-  gap = 0.08
-): { x: number; y: number; type: DieType }[] {
-  const pitch = radius * 2 + gap;
-  const totalHeight = types.length * pitch - gap;
-
-  return types.map((type, index) => ({
-    x: 0,
-    y: totalHeight / 2 - radius - index * pitch,
-    type,
-  }));
+export interface DiePlacement {
+  x: number;
+  y: number;
+  type: DieType;
 }
 
-export function layoutDiceGrid(
-  types: DieType[],
-  radius: number,
-  columns = DICE_GRID_COLUMNS,
-  gap = 0.06
-): { x: number; y: number; type: DieType }[] {
-  const rows = Math.ceil(types.length / columns);
-  const pitch = radius * 2 + gap;
+/** Equal gap between dice and equal margin to the scene bounds. */
+export function layoutDice(
+  columns: 1 | 2,
+  radius = DIE_RADIUS,
+  spacing = DIE_SPACING
+): DiePlacement[] {
+  const rows = Math.ceil(DICE_TYPES.length / columns);
+  const pitch = radius * 2 + spacing;
 
-  return types.map((type, index) => {
+  return DICE_TYPES.map((type, index) => {
     const col = index % columns;
     const row = Math.floor(index / columns);
 
     return {
+      type,
       x: (col - (columns - 1) / 2) * pitch,
       y: ((rows - 1) / 2 - row) * pitch,
-      type,
     };
   });
 }
 
-export interface DieRotation {
-  x: number;
-  y: number;
-  z: number;
+export function getCameraDistance(
+  fovDeg: number,
+  aspect: number,
+  columns: 1 | 2,
+  radius = DIE_RADIUS,
+  spacing = DIE_SPACING
+): number {
+  const rows = Math.ceil(DICE_TYPES.length / columns);
+  const pitch = radius * 2 + spacing;
+  const groupW = (columns - 1) * pitch + radius * 2;
+  const groupH = (rows - 1) * pitch + radius * 2;
+  const width = groupW + spacing * 2;
+  const height = groupH + spacing * 2;
+
+  const fov = (fovDeg * Math.PI) / 180;
+  const zForHeight = (height / 2) / Math.tan(fov / 2);
+  const hFov = 2 * Math.atan(Math.tan(fov / 2) * aspect);
+  const zForWidth = (width / 2) / Math.tan(hFov / 2);
+
+  return Math.max(zForHeight, zForWidth) * 1.05;
 }
 
-export function createDieRotations(count: number, direction: 1 | -1): DieRotation[] {
-  const base = [
-    { x: 0.007, y: 0.011, z: 0.004 },
-    { x: 0.006, y: 0.013, z: 0.003 },
-    { x: 0.008, y: 0.01, z: 0.005 },
-    { x: 0.005, y: 0.012, z: 0.004 },
-    { x: 0.007, y: 0.014, z: 0.003 },
-    { x: 0.006, y: 0.009, z: 0.006 },
-  ];
+const BASE_ROTATIONS = [
+  { x: 0.007, y: 0.011, z: 0.004 },
+  { x: 0.006, y: 0.013, z: 0.003 },
+  { x: 0.008, y: 0.01, z: 0.005 },
+  { x: 0.005, y: 0.012, z: 0.004 },
+  { x: 0.007, y: 0.014, z: 0.003 },
+  { x: 0.006, y: 0.009, z: 0.006 },
+];
 
-  return Array.from({ length: count }, (_, index) => {
-    const speed = base[index % base.length];
-    return {
-      x: speed.x * direction,
-      y: speed.y * direction,
-      z: speed.z * direction,
-    };
-  });
+export function createDieRotations(direction: 1 | -1) {
+  return BASE_ROTATIONS.map((speed) => ({
+    x: speed.x * direction,
+    y: speed.y * direction,
+    z: speed.z * direction,
+  }));
 }

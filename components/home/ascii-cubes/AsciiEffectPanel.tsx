@@ -3,65 +3,64 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { AsciiEffect } from "three/addons/effects/AsciiEffect.js";
-import type { DiceLayoutMode } from "./use-dice-layout";
 import {
   createDieGeometry,
   createDieRotations,
-  DICE_STACK,
   DIE_RADIUS,
-  layoutDiceColumn,
-  layoutDiceGrid,
+  getCameraDistance,
+  layoutDice,
 } from "./dice-geometries";
-import {
-  computePanelMouseInfluence,
-  type MouseTrackerState,
-  type PanelSide,
-} from "./use-mouse-tracker";
 
 const ASCII_CHARSET = " .:-+*=%@#";
-
-const CAMERA_Z: Record<DiceLayoutMode, number> = {
-  column: 15.2,
-  grid: 11,
-};
+const CAMERA_FOV = 38;
+const HOVER_RADIUS_PX = 72;
+const HOVER_BOOST = 15;
 
 interface AsciiEffectPanelProps {
   className?: string;
   colors: { foreground: string; cubeColor: number };
-  layout: DiceLayoutMode;
-  side: PanelSide;
-  mouseRef: React.RefObject<MouseTrackerState>;
-  reducedMotionRef: React.RefObject<boolean>;
+  columns: 1 | 2;
   spinDirection?: 1 | -1;
   paused?: boolean;
 }
 
-function makeEffectTransparent(effectElement: HTMLElement) {
-  effectElement.style.backgroundColor = "transparent";
-
-  const table = effectElement.querySelector("table");
-  const cell = effectElement.querySelector("td");
-
-  if (table instanceof HTMLElement) {
-    table.style.backgroundColor = "transparent";
+function makeEffectTransparent(element: HTMLElement) {
+  element.style.backgroundColor = "transparent";
+  for (const node of element.querySelectorAll("table, td")) {
+    if (node instanceof HTMLElement) {
+      node.style.backgroundColor = "transparent";
+    }
   }
-  if (cell instanceof HTMLElement) {
-    cell.style.backgroundColor = "transparent";
-  }
+}
+
+function getHoverBoost(
+  mesh: THREE.Mesh,
+  camera: THREE.PerspectiveCamera,
+  panelRect: DOMRect,
+  mouseX: number,
+  mouseY: number,
+  projected: THREE.Vector3
+): number {
+  projected.copy(mesh.position).project(camera);
+
+  const screenX =
+    panelRect.left + (projected.x * 0.5 + 0.5) * panelRect.width;
+  const screenY =
+    panelRect.top + (-projected.y * 0.5 + 0.5) * panelRect.height;
+  const dist = Math.hypot(mouseX - screenX, mouseY - screenY);
+
+  if (dist >= HOVER_RADIUS_PX) return 1;
+  return 1 + HOVER_BOOST * (1 - dist / HOVER_RADIUS_PX);
 }
 
 export function AsciiEffectPanel({
   className,
   colors,
-  layout,
-  side,
-  mouseRef,
-  reducedMotionRef,
+  columns,
   spinDirection = 1,
   paused = false,
 }: AsciiEffectPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const parallaxRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(paused);
 
   useEffect(() => {
@@ -72,16 +71,11 @@ export function AsciiEffectPanel({
     const container = containerRef.current;
     if (!container) return;
 
-    let width = container.clientWidth;
-    let height = container.clientHeight;
-    if (width === 0 || height === 0) {
-      width = 320;
-      height = 480;
-    }
+    let width = container.clientWidth || 320;
+    let height = container.clientHeight || 480;
 
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-    const baseCameraZ = CAMERA_Z[layout];
-    camera.position.z = baseCameraZ;
+    const camera = new THREE.PerspectiveCamera(CAMERA_FOV, width / height, 0.1, 100);
+    camera.position.z = getCameraDistance(CAMERA_FOV, width / height, columns);
 
     const scene = new THREE.Scene();
 
@@ -98,18 +92,13 @@ export function AsciiEffectPanel({
       color: colors.cubeColor,
     });
 
-    const rotations = createDieRotations(DICE_STACK.length, spinDirection);
-    const placements =
-      layout === "grid"
-        ? layoutDiceGrid(DICE_STACK, DIE_RADIUS)
-        : layoutDiceColumn(DICE_STACK, DIE_RADIUS);
+    const rotations = createDieRotations(spinDirection);
     const diceMeshes: THREE.Mesh[] = [];
 
-    for (const [index, { x, y, type }] of placements.entries()) {
+    for (const [index, { x, y, type }] of layoutDice(columns).entries()) {
       const mesh = new THREE.Mesh(createDieGeometry(type, DIE_RADIUS), material);
       mesh.position.set(x, y, 0);
       mesh.userData.rotationSpeed = rotations[index];
-      mesh.userData.basePosition = new THREE.Vector3(x, y, 0);
       diceMeshes.push(mesh);
       scene.add(mesh);
     }
@@ -132,68 +121,46 @@ export function AsciiEffectPanel({
     effectElement.style.overflow = "hidden";
     effectElement.style.pointerEvents = "none";
     makeEffectTransparent(effectElement);
+    container.appendChild(effectElement);
 
-    const parallaxLayer = parallaxRef.current;
-    if (!parallaxLayer) return;
+    let mouseX = -1;
+    let mouseY = -1;
+    const onPointerMove = (event: PointerEvent) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+    };
 
-    parallaxLayer.appendChild(effectElement);
-
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const projected = new THREE.Vector3();
     let animationId = 0;
-    let smoothInfluence = 0;
-    let smoothLx = 0;
-    let smoothLy = 0;
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
 
     const animate = () => {
       animationId = requestAnimationFrame(animate);
 
-      const mouse = mouseRef.current;
-      const reducedMotion = reducedMotionRef.current ?? false;
-      const panelRect = container.getBoundingClientRect();
-      const { influence, lx, ly } = reducedMotion
-        ? { influence: 0, lx: 0, ly: 0 }
-        : computePanelMouseInfluence(side, mouse, panelRect);
-
-      smoothInfluence += (influence - smoothInfluence) * 0.14;
-      smoothLx += (lx - smoothLx) * 0.16;
-      smoothLy += (ly - smoothLy) * 0.16;
-
-      const targetCamX = smoothLx * 1.4 * smoothInfluence;
-      const targetCamY = -smoothLy * 0.45 * smoothInfluence;
-      const targetCamZ = baseCameraZ - smoothInfluence * 2;
-      camera.position.x += (targetCamX - camera.position.x) * 0.12;
-      camera.position.y += (targetCamY - camera.position.y) * 0.12;
-      camera.position.z += (targetCamZ - camera.position.z) * 0.1;
-
-      light1.position.x = 3 + smoothLx * 5.5 * smoothInfluence;
-      light1.position.y = 4 - smoothLy * 4.5 * smoothInfluence;
-      light2.position.x = -3 + smoothLx * 2.5 * smoothInfluence;
-      light2.position.y = -2 - smoothLy * 2 * smoothInfluence;
-
-      const panelShiftX = smoothLx * 12 * smoothInfluence;
-      parallaxLayer.style.transform = `translateX(${panelShiftX}px)`;
-
       if (!pausedRef.current) {
+        const panelRect = container.getBoundingClientRect();
+        const hoverEnabled =
+          !reducedMotion.matches &&
+          mouseX >= panelRect.left &&
+          mouseX <= panelRect.right &&
+          mouseY >= panelRect.top &&
+          mouseY <= panelRect.bottom;
+
         for (const mesh of diceMeshes) {
           const speed = mesh.userData.rotationSpeed as {
             x: number;
             y: number;
             z: number;
           };
-          const base = mesh.userData.basePosition as THREE.Vector3;
+          const boost = hoverEnabled
+            ? getHoverBoost(mesh, camera, panelRect, mouseX, mouseY, projected)
+            : 1;
 
-          const dx = smoothLx * 3.5 - base.x * 0.4;
-          const dy = smoothLy * 3.5 - base.y * 0.4;
-          const proximity = Math.max(0, 1 - Math.hypot(dx, dy) / 3.5);
-          const boost = 1 + proximity * smoothInfluence * 3;
-
-          mesh.rotation.x += speed.x * boost + dy * 0.009 * smoothInfluence;
-          mesh.rotation.y += speed.y * boost + dx * 0.009 * smoothInfluence;
+          mesh.rotation.x += speed.x * boost;
+          mesh.rotation.y += speed.y * boost;
           mesh.rotation.z += speed.z * boost;
-
-          const floatOffset = proximity * 0.35 * smoothInfluence;
-          mesh.position.x = base.x + smoothLx * floatOffset;
-          mesh.position.y = base.y + smoothLy * floatOffset;
-          mesh.position.z = proximity * smoothInfluence * 0.2;
         }
       }
 
@@ -208,38 +175,29 @@ export function AsciiEffectPanel({
       const nextHeight = container.clientHeight;
       if (nextWidth === 0 || nextHeight === 0) return;
 
-      camera.aspect = nextWidth / nextHeight;
+      width = nextWidth;
+      height = nextHeight;
+      camera.aspect = width / height;
+      camera.position.z = getCameraDistance(CAMERA_FOV, width / height, columns);
       camera.updateProjectionMatrix();
-      renderer.setSize(nextWidth, nextHeight);
-      effect.setSize(nextWidth, nextHeight);
+      renderer.setSize(width, height);
+      effect.setSize(width, height);
     });
 
     resizeObserver.observe(container);
 
     return () => {
       cancelAnimationFrame(animationId);
+      window.removeEventListener("pointermove", onPointerMove);
       resizeObserver.disconnect();
-      parallaxLayer.style.transform = "";
-      parallaxLayer.removeChild(effectElement);
+      container.removeChild(effectElement);
       renderer.dispose();
       material.dispose();
       for (const mesh of diceMeshes) {
         mesh.geometry.dispose();
       }
     };
-  }, [
-    colors.cubeColor,
-    colors.foreground,
-    layout,
-    side,
-    mouseRef,
-    reducedMotionRef,
-    spinDirection,
-  ]);
+  }, [colors.cubeColor, colors.foreground, columns, spinDirection]);
 
-  return (
-    <div ref={containerRef} className={className} aria-hidden>
-      <div ref={parallaxRef} className="h-full w-full" />
-    </div>
-  );
+  return <div ref={containerRef} className={className} aria-hidden />;
 }

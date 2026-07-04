@@ -3,16 +3,11 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useDiceDecor } from "@/components/dice-decor-provider";
-import {
-  getDiceLayoutMode,
-  type DiceLayoutState,
-} from "./use-dice-layout";
-import { useMouseTrackerWithMotionPreference } from "./use-mouse-tracker";
+import { getDiceLayoutMode, type DiceLayoutState } from "./use-dice-layout";
 import { useThemeColors } from "./use-theme-colors";
 
 const AsciiEffectPanel = dynamic(
-  () =>
-    import("./AsciiEffectPanel").then((mod) => mod.AsciiEffectPanel),
+  () => import("./AsciiEffectPanel").then((mod) => mod.AsciiEffectPanel),
   { ssr: false }
 );
 
@@ -21,14 +16,10 @@ function usePageHidden(): boolean {
 
   useEffect(() => {
     setHidden(document.hidden);
-
-    const handleVisibilityChange = () => {
-      setHidden(document.hidden);
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    const onVisibilityChange = () => setHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     return () =>
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
 
   return hidden;
@@ -47,43 +38,32 @@ function useDiceLayout(): DiceLayoutState {
   return layout;
 }
 
-const PANEL_ANCHOR =
-  "absolute top-1/2 -translate-y-1/2 w-[calc(50%-21rem-2.5rem-1rem)]";
-
-const PANEL_COLUMN_CLASS = `${PANEL_ANCHOR} h-[min(52rem,calc(100vh-8rem))]`;
-const PANEL_GRID_CLASS = `${PANEL_ANCHOR} h-[min(48rem,calc(100vh-8rem))]`;
+const PANEL_CLASS =
+  "absolute top-1/2 -translate-y-1/2 h-[min(52rem,calc(100vh-8rem))] w-[calc(50%-21rem-2.5rem-1rem)]";
 
 export function AsciiCubesDecor() {
   const colors = useThemeColors();
   const { enabled, mounted } = useDiceDecor();
   const diceLayout = useDiceLayout();
   const pageHidden = usePageHidden();
-  const { mouseRef, reducedMotionRef } = useMouseTrackerWithMotionPreference();
 
   if (!mounted || !enabled || !colors || diceLayout === "hidden") return null;
 
-  const panelClass =
-    diceLayout === "grid" ? PANEL_GRID_CLASS : PANEL_COLUMN_CLASS;
+  const columns = diceLayout === "grid" ? 2 : 1;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
       <AsciiEffectPanel
-        className={`${panelClass} right-[calc(50%+21rem+2.5rem)]`}
+        className={`${PANEL_CLASS} right-[calc(50%+21rem+2.5rem)]`}
         colors={colors}
-        layout={diceLayout}
-        side="left"
-        mouseRef={mouseRef}
-        reducedMotionRef={reducedMotionRef}
+        columns={columns}
         spinDirection={1}
         paused={pageHidden}
       />
       <AsciiEffectPanel
-        className={`${panelClass} left-[calc(50%+21rem+2.5rem)]`}
+        className={`${PANEL_CLASS} left-[calc(50%+21rem+2.5rem)]`}
         colors={colors}
-        layout={diceLayout}
-        side="right"
-        mouseRef={mouseRef}
-        reducedMotionRef={reducedMotionRef}
+        columns={columns}
         spinDirection={-1}
         paused={pageHidden}
       />
