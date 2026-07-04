@@ -17,10 +17,10 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-plex-mono",
 });
 
-// export const metadata: Metadata = {
-//   title: "Arham Humayun",
-//   // description: "Arham Humayun's Personal Website",
-// };
+export const metadata: Metadata = {
+  title: "Arham Humayun",
+  // description: "Arham Humayun's Personal Website",
+};
 
 export default function RootLayout({
   children,
