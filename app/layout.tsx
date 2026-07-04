@@ -3,7 +3,9 @@ import { IBM_Plex_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { AsciiCubesDecor } from "@/components/home/ascii-cubes/AsciiCubesDecor";
 import { SiteShell } from "@/components/site-shell";
+import { DiceDecorProvider } from "@/components/dice-decor-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
@@ -33,11 +35,14 @@ export default function RootLayout({
         className={`${inter.variable} ${ibmPlexMono.variable} ${inter.className} antialiased flex flex-col min-h-screen`}
       >
         <ThemeProvider>
-          <SiteShell>
-            <Navbar />
-            <main className="flex-grow w-full py-12">{children}</main>
-            <Footer />
-          </SiteShell>
+          <DiceDecorProvider>
+            <AsciiCubesDecor />
+            <SiteShell className="relative z-10">
+              <Navbar />
+              <main className="flex-grow w-full py-12">{children}</main>
+              <Footer />
+            </SiteShell>
+          </DiceDecorProvider>
         </ThemeProvider>
       </body>
     </html>

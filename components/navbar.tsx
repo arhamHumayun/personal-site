@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Menu } from "lucide-react";
+import { DiceToggle } from "@/components/dice-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getCurrentNavPath, navItems } from "@/lib/nav-path";
 
@@ -96,7 +97,10 @@ export function Navbar() {
             <NavLinks pathname={pathname} />
           </NavigationMenuList>
         </NavigationMenu>
-        <ThemeToggle className="min-[480px]:ml-4" />
+        <div className="flex items-center gap-0.5 min-[480px]:ml-4">
+          <DiceToggle />
+          <ThemeToggle />
+        </div>
         <Button
           variant="ghost"
           size="sm"
