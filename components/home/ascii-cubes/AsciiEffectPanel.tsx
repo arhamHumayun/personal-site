@@ -7,6 +7,7 @@ import {
   createDieGeometry,
   createDieRotations,
   DIE_RADIUS,
+  type DieType,
   getCameraDistance,
   layoutDice,
 } from "./dice-geometries";
@@ -19,9 +20,16 @@ const HOVER_BOOST = 15;
 interface AsciiEffectPanelProps {
   className?: string;
   colors: { foreground: string; cubeColor: number };
-  columns: 1 | 2;
+  diceTypes: DieType[];
   spinDirection?: 1 | -1;
   paused?: boolean;
+}
+
+interface AsciiViewport {
+  left: number;
+  top: number;
+  mapWidth: number;
+  mapHeight: number;
 }
 
 function makeEffectTransparent(element: HTMLElement) {
@@ -33,21 +41,58 @@ function makeEffectTransparent(element: HTMLElement) {
   }
 }
 
+/**
+ * AsciiEffect draws into a fixed-size td. The character grid can be wider/taller
+ * than the clip box, so map against scroll dimensions for accurate hit testing.
+ */
+function getAsciiViewport(effectRoot: HTMLElement): AsciiViewport | null {
+  const td = effectRoot.querySelector("td");
+  if (!(td instanceof HTMLElement)) return null;
+
+  const rect = td.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return null;
+
+  return {
+    left: rect.left,
+    top: rect.top,
+    mapWidth: Math.max(td.scrollWidth, rect.width),
+    mapHeight: Math.max(td.scrollHeight, rect.height),
+  };
+}
+
+function meshToScreen(
+  mesh: THREE.Mesh,
+  camera: THREE.PerspectiveCamera,
+  viewport: AsciiViewport,
+  worldPosition: THREE.Vector3,
+  projected: THREE.Vector3
+) {
+  mesh.getWorldPosition(worldPosition);
+  projected.copy(worldPosition).project(camera);
+
+  return {
+    x: viewport.left + (projected.x * 0.5 + 0.5) * viewport.mapWidth,
+    y: viewport.top + (-projected.y * 0.5 + 0.5) * viewport.mapHeight,
+  };
+}
+
 function getHoverBoost(
   mesh: THREE.Mesh,
   camera: THREE.PerspectiveCamera,
-  panelRect: DOMRect,
+  viewport: AsciiViewport,
   mouseX: number,
   mouseY: number,
+  worldPosition: THREE.Vector3,
   projected: THREE.Vector3
 ): number {
-  projected.copy(mesh.position).project(camera);
-
-  const screenX =
-    panelRect.left + (projected.x * 0.5 + 0.5) * panelRect.width;
-  const screenY =
-    panelRect.top + (-projected.y * 0.5 + 0.5) * panelRect.height;
-  const dist = Math.hypot(mouseX - screenX, mouseY - screenY);
+  const { x, y } = meshToScreen(
+    mesh,
+    camera,
+    viewport,
+    worldPosition,
+    projected
+  );
+  const dist = Math.hypot(mouseX - x, mouseY - y);
 
   if (dist >= HOVER_RADIUS_PX) return 1;
   return 1 + HOVER_BOOST * (1 - dist / HOVER_RADIUS_PX);
@@ -56,7 +101,7 @@ function getHoverBoost(
 export function AsciiEffectPanel({
   className,
   colors,
-  columns,
+  diceTypes,
   spinDirection = 1,
   paused = false,
 }: AsciiEffectPanelProps) {
@@ -70,12 +115,6 @@ export function AsciiEffectPanel({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
-    let width = container.clientWidth || 320;
-    let height = container.clientHeight || 480;
-
-    const camera = new THREE.PerspectiveCamera(CAMERA_FOV, width / height, 0.1, 100);
-    camera.position.z = getCameraDistance(CAMERA_FOV, width / height, columns);
 
     const scene = new THREE.Scene();
 
@@ -95,7 +134,7 @@ export function AsciiEffectPanel({
     const rotations = createDieRotations(spinDirection);
     const diceMeshes: THREE.Mesh[] = [];
 
-    for (const [index, { x, y, type }] of layoutDice(columns).entries()) {
+    for (const [index, { x, y, type }] of layoutDice(diceTypes).entries()) {
       const mesh = new THREE.Mesh(createDieGeometry(type, DIE_RADIUS), material);
       mesh.position.set(x, y, 0);
       mesh.userData.rotationSpeed = rotations[index];
@@ -105,7 +144,6 @@ export function AsciiEffectPanel({
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setClearColor(0x000000, 0);
-    renderer.setSize(width, height);
 
     const effect = new AsciiEffect(renderer, ASCII_CHARSET, {
       invert: true,
@@ -113,40 +151,52 @@ export function AsciiEffectPanel({
       color: true,
       alpha: true,
     });
-    effect.setSize(width, height);
 
     const effectElement = effect.domElement;
     effectElement.style.color = colors.foreground;
-    effectElement.style.fontFamily = "var(--font-plex-mono), ui-monospace, monospace";
+    effectElement.style.fontFamily =
+      "var(--font-plex-mono), ui-monospace, monospace";
     effectElement.style.overflow = "hidden";
     effectElement.style.pointerEvents = "none";
     makeEffectTransparent(effectElement);
     container.appendChild(effectElement);
 
+    const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 100);
+
+    let width = 0;
+    let height = 0;
+    let animationId = 0;
     let mouseX = -1;
     let mouseY = -1;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const worldPosition = new THREE.Vector3();
+    const projected = new THREE.Vector3();
+
     const onPointerMove = (event: PointerEvent) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
     };
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const projected = new THREE.Vector3();
-    let animationId = 0;
-
     window.addEventListener("pointermove", onPointerMove, { passive: true });
 
-    const animate = () => {
+    function resize(w: number, h: number) {
+      width = w;
+      height = h;
+      camera.aspect = w / h;
+      camera.position.z = getCameraDistance(CAMERA_FOV, w / h, diceTypes.length);
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      effect.setSize(w, h);
+    }
+
+    function animate() {
       animationId = requestAnimationFrame(animate);
 
+      if (width === 0 || height === 0) return;
+
       if (!pausedRef.current) {
-        const panelRect = container.getBoundingClientRect();
-        const hoverEnabled =
-          !reducedMotion.matches &&
-          mouseX >= panelRect.left &&
-          mouseX <= panelRect.right &&
-          mouseY >= panelRect.top &&
-          mouseY <= panelRect.bottom;
+        const viewport = getAsciiViewport(effectElement);
 
         for (const mesh of diceMeshes) {
           const speed = mesh.userData.rotationSpeed as {
@@ -154,9 +204,18 @@ export function AsciiEffectPanel({
             y: number;
             z: number;
           };
-          const boost = hoverEnabled
-            ? getHoverBoost(mesh, camera, panelRect, mouseX, mouseY, projected)
-            : 1;
+          const boost =
+            viewport && !reducedMotion.matches
+              ? getHoverBoost(
+                  mesh,
+                  camera,
+                  viewport,
+                  mouseX,
+                  mouseY,
+                  worldPosition,
+                  projected
+                )
+              : 1;
 
           mesh.rotation.x += speed.x * boost;
           mesh.rotation.y += speed.y * boost;
@@ -166,22 +225,14 @@ export function AsciiEffectPanel({
 
       effect.render(scene, camera);
       makeEffectTransparent(effectElement);
-    };
+    }
 
     animate();
 
-    const resizeObserver = new ResizeObserver(() => {
-      const nextWidth = container.clientWidth;
-      const nextHeight = container.clientHeight;
+    const resizeObserver = new ResizeObserver((entries) => {
+      const { width: nextWidth, height: nextHeight } = entries[0].contentRect;
       if (nextWidth === 0 || nextHeight === 0) return;
-
-      width = nextWidth;
-      height = nextHeight;
-      camera.aspect = width / height;
-      camera.position.z = getCameraDistance(CAMERA_FOV, width / height, columns);
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-      effect.setSize(width, height);
+      resize(nextWidth, nextHeight);
     });
 
     resizeObserver.observe(container);
@@ -197,7 +248,7 @@ export function AsciiEffectPanel({
         mesh.geometry.dispose();
       }
     };
-  }, [colors.cubeColor, colors.foreground, columns, spinDirection]);
+  }, [colors.cubeColor, colors.foreground, diceTypes, spinDirection]);
 
   return <div ref={containerRef} className={className} aria-hidden />;
 }

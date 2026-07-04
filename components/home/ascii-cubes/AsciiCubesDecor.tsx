@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useDiceDecor } from "@/components/dice-decor-provider";
 import { getDiceLayoutMode, type DiceLayoutState } from "./use-dice-layout";
+import { LEFT_PANEL_DICE, RIGHT_PANEL_DICE } from "./dice-geometries";
 import { useThemeColors } from "./use-theme-colors";
 
 const AsciiEffectPanel = dynamic(
@@ -49,21 +50,19 @@ export function AsciiCubesDecor() {
 
   if (!mounted || !enabled || !colors || diceLayout === "hidden") return null;
 
-  const columns = diceLayout === "grid" ? 2 : 1;
-
   return (
     <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
       <AsciiEffectPanel
         className={`${PANEL_CLASS} right-[calc(50%+21rem+2.5rem)]`}
         colors={colors}
-        columns={columns}
+        diceTypes={RIGHT_PANEL_DICE}
         spinDirection={1}
         paused={pageHidden}
       />
       <AsciiEffectPanel
         className={`${PANEL_CLASS} left-[calc(50%+21rem+2.5rem)]`}
         colors={colors}
-        columns={columns}
+        diceTypes={LEFT_PANEL_DICE}
         spinDirection={-1}
         paused={pageHidden}
       />

@@ -2,7 +2,9 @@ import * as THREE from "three";
 
 export type DieType = "d20" | "d12" | "d10" | "d8" | "d6" | "d4";
 
-export const DICE_TYPES: DieType[] = ["d20", "d12", "d10", "d8", "d6", "d4"];
+export const LEFT_PANEL_DICE: DieType[] = ["d20", "d10", "d6"];
+export const RIGHT_PANEL_DICE: DieType[] = ["d12", "d8", "d4"];
+
 export const DIE_RADIUS = 0.88;
 export const DIE_SPACING = 0.35;
 
@@ -65,38 +67,32 @@ export interface DiePlacement {
   type: DieType;
 }
 
-/** Equal gap between dice and equal margin to the scene bounds. */
+/** Three dice in a single column with equal gaps and margins. */
 export function layoutDice(
-  columns: 1 | 2,
+  types: DieType[],
   radius = DIE_RADIUS,
   spacing = DIE_SPACING
 ): DiePlacement[] {
-  const rows = Math.ceil(DICE_TYPES.length / columns);
   const pitch = radius * 2 + spacing;
+  const rows = types.length;
 
-  return DICE_TYPES.map((type, index) => {
-    const col = index % columns;
-    const row = Math.floor(index / columns);
-
-    return {
-      type,
-      x: (col - (columns - 1) / 2) * pitch,
-      y: ((rows - 1) / 2 - row) * pitch,
-    };
-  });
+  return types.map((type, index) => ({
+    type,
+    x: 0,
+    y: ((rows - 1) / 2 - index) * pitch,
+  }));
 }
 
 export function getCameraDistance(
   fovDeg: number,
   aspect: number,
-  columns: 1 | 2,
+  diceCount = 3,
   radius = DIE_RADIUS,
   spacing = DIE_SPACING
 ): number {
-  const rows = Math.ceil(DICE_TYPES.length / columns);
   const pitch = radius * 2 + spacing;
-  const groupW = (columns - 1) * pitch + radius * 2;
-  const groupH = (rows - 1) * pitch + radius * 2;
+  const groupW = radius * 2;
+  const groupH = (diceCount - 1) * pitch + radius * 2;
   const width = groupW + spacing * 2;
   const height = groupH + spacing * 2;
 
@@ -110,11 +106,8 @@ export function getCameraDistance(
 
 const BASE_ROTATIONS = [
   { x: 0.007, y: 0.011, z: 0.004 },
-  { x: 0.006, y: 0.013, z: 0.003 },
   { x: 0.008, y: 0.01, z: 0.005 },
-  { x: 0.005, y: 0.012, z: 0.004 },
   { x: 0.007, y: 0.014, z: 0.003 },
-  { x: 0.006, y: 0.009, z: 0.006 },
 ];
 
 export function createDieRotations(direction: 1 | -1) {
