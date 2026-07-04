@@ -16,6 +16,8 @@ const ASCII_CHARSET = " .:-+*=%@#";
 const CAMERA_FOV = 38;
 const HOVER_RADIUS_PX = 72;
 const HOVER_BOOST = 15;
+const HOVER_RADIUS_PX_SQ = HOVER_RADIUS_PX * HOVER_RADIUS_PX;
+const TRANSPARENT_STYLE_ID = "ascii-effect-transparent";
 
 interface AsciiEffectPanelProps {
   className?: string;
@@ -32,23 +34,17 @@ interface AsciiViewport {
   mapHeight: number;
 }
 
-function makeEffectTransparent(element: HTMLElement) {
-  element.style.backgroundColor = "transparent";
-  for (const node of element.querySelectorAll("table, td")) {
-    if (node instanceof HTMLElement) {
-      node.style.backgroundColor = "transparent";
-    }
-  }
+function ensureTransparentStyles() {
+  if (document.getElementById(TRANSPARENT_STYLE_ID)) return;
+
+  const style = document.createElement("style");
+  style.id = TRANSPARENT_STYLE_ID;
+  style.textContent =
+    ".ascii-effect-panel,.ascii-effect-panel table,.ascii-effect-panel td{background-color:transparent!important}";
+  document.head.appendChild(style);
 }
 
-/**
- * AsciiEffect draws into a fixed-size td. The character grid can be wider/taller
- * than the clip box, so map against scroll dimensions for accurate hit testing.
- */
-function getAsciiViewport(effectRoot: HTMLElement): AsciiViewport | null {
-  const td = effectRoot.querySelector("td");
-  if (!(td instanceof HTMLElement)) return null;
-
+function readAsciiViewport(td: HTMLElement): AsciiViewport | null {
   const rect = td.getBoundingClientRect();
   if (rect.width === 0 || rect.height === 0) return null;
 
@@ -60,42 +56,21 @@ function getAsciiViewport(effectRoot: HTMLElement): AsciiViewport | null {
   };
 }
 
-function meshToScreen(
-  mesh: THREE.Mesh,
-  camera: THREE.PerspectiveCamera,
-  viewport: AsciiViewport,
-  worldPosition: THREE.Vector3,
-  projected: THREE.Vector3
-) {
-  mesh.getWorldPosition(worldPosition);
-  projected.copy(worldPosition).project(camera);
-
-  return {
-    x: viewport.left + (projected.x * 0.5 + 0.5) * viewport.mapWidth,
-    y: viewport.top + (-projected.y * 0.5 + 0.5) * viewport.mapHeight,
-  };
-}
-
 function getHoverBoost(
-  mesh: THREE.Mesh,
-  camera: THREE.PerspectiveCamera,
+  projectedX: number,
+  projectedY: number,
   viewport: AsciiViewport,
   mouseX: number,
-  mouseY: number,
-  worldPosition: THREE.Vector3,
-  projected: THREE.Vector3
+  mouseY: number
 ): number {
-  const { x, y } = meshToScreen(
-    mesh,
-    camera,
-    viewport,
-    worldPosition,
-    projected
-  );
-  const dist = Math.hypot(mouseX - x, mouseY - y);
+  const screenX = viewport.left + (projectedX * 0.5 + 0.5) * viewport.mapWidth;
+  const screenY = viewport.top + (-projectedY * 0.5 + 0.5) * viewport.mapHeight;
+  const dx = mouseX - screenX;
+  const dy = mouseY - screenY;
+  const distSq = dx * dx + dy * dy;
 
-  if (dist >= HOVER_RADIUS_PX) return 1;
-  return 1 + HOVER_BOOST * (1 - dist / HOVER_RADIUS_PX);
+  if (distSq >= HOVER_RADIUS_PX_SQ) return 1;
+  return 1 + HOVER_BOOST * (1 - Math.sqrt(distSq) / HOVER_RADIUS_PX);
 }
 
 export function AsciiEffectPanel({
@@ -107,14 +82,18 @@ export function AsciiEffectPanel({
 }: AsciiEffectPanelProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(paused);
+  const resumeRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     pausedRef.current = paused;
+    if (!paused) resumeRef.current();
   }, [paused]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    ensureTransparentStyles();
 
     const scene = new THREE.Scene();
 
@@ -142,7 +121,11 @@ export function AsciiEffectPanel({
       scene.add(mesh);
     }
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
     renderer.setClearColor(0x000000, 0);
 
     const effect = new AsciiEffect(renderer, ASCII_CHARSET, {
@@ -153,12 +136,12 @@ export function AsciiEffectPanel({
     });
 
     const effectElement = effect.domElement;
+    effectElement.className = "ascii-effect-panel";
     effectElement.style.color = colors.foreground;
     effectElement.style.fontFamily =
       "var(--font-plex-mono), ui-monospace, monospace";
     effectElement.style.overflow = "hidden";
     effectElement.style.pointerEvents = "none";
-    makeEffectTransparent(effectElement);
     container.appendChild(effectElement);
 
     const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 100);
@@ -168,17 +151,45 @@ export function AsciiEffectPanel({
     let animationId = 0;
     let mouseX = -1;
     let mouseY = -1;
+    let hoverEnabled = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let tdElement: HTMLTableCellElement | null = null;
+    let viewport: AsciiViewport | null = null;
+
     const worldPosition = new THREE.Vector3();
     const projected = new THREE.Vector3();
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onReducedMotionChange = () => {
+      hoverEnabled = !reducedMotion.matches;
+    };
+    reducedMotion.addEventListener("change", onReducedMotionChange);
+
+    const invalidateViewport = () => {
+      viewport = null;
+    };
 
     const onPointerMove = (event: PointerEvent) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
+      invalidateViewport();
     };
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("scroll", invalidateViewport, { passive: true });
+
+    function getViewport(): AsciiViewport | null {
+      if (viewport) return viewport;
+
+      if (!tdElement || !tdElement.isConnected) {
+        const td = effectElement.querySelector("td");
+        tdElement = td instanceof HTMLTableCellElement ? td : null;
+      }
+      if (!tdElement) return null;
+
+      viewport = readAsciiViewport(tdElement);
+      return viewport;
+    }
 
     function resize(w: number, h: number) {
       width = w;
@@ -188,45 +199,52 @@ export function AsciiEffectPanel({
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       effect.setSize(w, h);
+      invalidateViewport();
     }
 
     function animate() {
+      if (pausedRef.current) {
+        animationId = 0;
+        return;
+      }
+
       animationId = requestAnimationFrame(animate);
 
       if (width === 0 || height === 0) return;
 
-      if (!pausedRef.current) {
-        const viewport = getAsciiViewport(effectElement);
+      const activeViewport = hoverEnabled ? getViewport() : null;
 
-        for (const mesh of diceMeshes) {
-          const speed = mesh.userData.rotationSpeed as {
-            x: number;
-            y: number;
-            z: number;
-          };
-          const boost =
-            viewport && !reducedMotion.matches
-              ? getHoverBoost(
-                  mesh,
-                  camera,
-                  viewport,
-                  mouseX,
-                  mouseY,
-                  worldPosition,
-                  projected
-                )
-              : 1;
+      for (const mesh of diceMeshes) {
+        const speed = mesh.userData.rotationSpeed as {
+          x: number;
+          y: number;
+          z: number;
+        };
+        let boost = 1;
 
-          mesh.rotation.x += speed.x * boost;
-          mesh.rotation.y += speed.y * boost;
-          mesh.rotation.z += speed.z * boost;
+        if (activeViewport) {
+          mesh.getWorldPosition(worldPosition);
+          projected.copy(worldPosition).project(camera);
+          boost = getHoverBoost(
+            projected.x,
+            projected.y,
+            activeViewport,
+            mouseX,
+            mouseY
+          );
         }
+
+        mesh.rotation.x += speed.x * boost;
+        mesh.rotation.y += speed.y * boost;
+        mesh.rotation.z += speed.z * boost;
       }
 
       effect.render(scene, camera);
-      makeEffectTransparent(effectElement);
     }
 
+    resumeRef.current = () => {
+      if (!pausedRef.current && animationId === 0) animate();
+    };
     animate();
 
     const resizeObserver = new ResizeObserver((entries) => {
@@ -239,14 +257,14 @@ export function AsciiEffectPanel({
 
     return () => {
       cancelAnimationFrame(animationId);
+      animationId = 0;
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("scroll", invalidateViewport);
+      reducedMotion.removeEventListener("change", onReducedMotionChange);
       resizeObserver.disconnect();
       container.removeChild(effectElement);
       renderer.dispose();
       material.dispose();
-      for (const mesh of diceMeshes) {
-        mesh.geometry.dispose();
-      }
     };
   }, [colors.cubeColor, colors.foreground, diceTypes, spinDirection]);
 

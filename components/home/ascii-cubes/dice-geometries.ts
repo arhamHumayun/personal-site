@@ -42,7 +42,7 @@ function createD10Geometry(radius: number): THREE.BufferGeometry {
   return new THREE.PolyhedronGeometry(vertices.flat(), indices, radius, 0);
 }
 
-export function createDieGeometry(type: DieType, radius: number): THREE.BufferGeometry {
+function buildDieGeometry(type: DieType, radius: number): THREE.BufferGeometry {
   switch (type) {
     case "d20":
       return new THREE.IcosahedronGeometry(radius, 0);
@@ -59,6 +59,18 @@ export function createDieGeometry(type: DieType, radius: number): THREE.BufferGe
     case "d4":
       return new THREE.TetrahedronGeometry(radius, 0);
   }
+}
+
+const geometryCache = new Map<string, THREE.BufferGeometry>();
+
+export function createDieGeometry(type: DieType, radius: number): THREE.BufferGeometry {
+  const key = `${type}:${radius}`;
+  let geometry = geometryCache.get(key);
+  if (!geometry) {
+    geometry = buildDieGeometry(type, radius);
+    geometryCache.set(key, geometry);
+  }
+  return geometry;
 }
 
 export interface DiePlacement {
