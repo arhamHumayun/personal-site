@@ -39,7 +39,7 @@ export default async function Home() {
           games.
         </P>
         <P>
-          I think a lot about how systems work, both in code and in games. Right now
+          I think a lot about how systems work, both in code and in games. So far,
           I{`'`}ve built{" "}
           <A href="/projects/tiny-ship">Tiny Ship</A>, a survivor-like twin-stick shooter, and{" "}
           <A href="/projects/monster-labs">Monster Labs</A>, an AI tool for D&D
