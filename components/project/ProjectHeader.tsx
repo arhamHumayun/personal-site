@@ -4,7 +4,7 @@ import { H1, P } from '@/components/typography';
 
 interface ProjectHeaderProps {
   title: string;
-  description: string;
+  description?: string;
   image?: string;
 }
 
@@ -24,7 +24,7 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({ title, description
         </div>
       )}
       <H1 className="mt-2 mb-2">{title}</H1>
-      <P className="text-muted-foreground text-lg mb-2">{description}</P>
+      {description && <P className="text-muted-foreground text-lg mb-2">{description}</P>}
     </div>
   );
 }; 

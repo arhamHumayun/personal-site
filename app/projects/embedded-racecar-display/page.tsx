@@ -16,7 +16,6 @@ export default function EmbeddedRacecarDisplay() {
     <ProjectLayout>
       <ProjectHeader
         title={metadata.title}
-        description={metadata.description}
         image={metadata.img}
       />
       <P>
