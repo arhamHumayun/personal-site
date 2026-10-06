@@ -17,7 +17,6 @@ export default function TabletopRPGDiceRoller() {
     <ProjectLayout>
       <ProjectHeader
         title={metadata.title}
-        description={metadata.description}
         image={metadata.img}
       />
         <P>

@@ -16,7 +16,6 @@ export default function Journable() {
     <ProjectLayout>
       <ProjectHeader
         title={metadata.title}
-        description={metadata.description}
         image={metadata.img}
       />
       <P>
