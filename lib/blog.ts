@@ -108,7 +108,12 @@ export function formatPostDate(
   variant: "long" | "compact" = "long"
 ) {
   if (!dateString) return "";
-  const date = new Date(dateString);
+  // Date-only strings ("2026-10-06") parse as UTC midnight, which renders as
+  // the previous day in timezones behind UTC. Parse them as local dates.
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+  const date = dateOnly
+    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+    : new Date(dateString);
   if (Number.isNaN(date.getTime())) return "";
 
   if (variant === "compact") {

@@ -3,7 +3,7 @@ title: "How I made music for my game with zero experience"
 date: "2026-10-06"
 ---
 
-In my quest to add some life to my game, I had run into the hard problem of finding music to put into the game. The game is a very simple twin-stick shooter with roguelike elements and borrows a lot from Kingdom Hearts 2 in terms of gameplay mechanics. I wanted a fun, intense, yet enjoyable track that plays while you’re blasting ships.
+In my quest to add some life to Tiny Ship, I had run into the hard problem of finding music to put into the game. The game is a very simple twin-stick shooter with roguelike elements and borrows a lot from Kingdom Hearts 2 in terms of gameplay mechanics. I wanted a fun, intense, yet enjoyable track that plays while you’re blasting ships.
 
 At first I tried to find copyright free music to put in and this was actually what I had for quite some time. This will always be a limited approach and I always ended up feeling like I just put some random track that could potentially fit for my game, rather than something bespoke. Then I tried AI music generators like SUNO, but they cost subscription money and I found that while the output was fairly decent, it always had this unnatural feeling about them. I couldn't change a bar, make a harder version for a later stage, or reuse a theme across levels.
 
@@ -24,7 +24,7 @@ python examples/hello_loop.py
 
 Then open the folder in your coding agent and describe the song you want.
 
-Here are some samples to showcase what’s in my game! You’ll notice that the main theme, and menu theme share tunes.
+Here are some samples to showcase what’s in Tiny Ship! You’ll notice that the main theme, and menu theme share tunes.
 
 ![Stage 1 theme (short version): the tune fast, on a saw lead](/audio/stage1-short.mp3)
 
