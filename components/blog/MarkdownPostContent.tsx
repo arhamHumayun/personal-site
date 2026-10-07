@@ -48,6 +48,20 @@ const markdownComponents: Components = {
       return null;
     }
 
+    // An image-style line that points at an audio file (![caption](/audio/song.mp3)) becomes a player with a caption.
+    if (/\.(mp3|ogg|wav)$/i.test(src)) {
+      return (
+        <span className="my-6 mx-auto block w-full max-w-[700px]">
+          <audio controls preload="none" src={src} className="w-full" />
+          {alt ? (
+            <span className="mt-2 block text-sm text-muted-foreground">
+              {alt}
+            </span>
+          ) : null}
+        </span>
+      );
+    }
+
     const isGif = src.endsWith(".gif");
 
     return (
