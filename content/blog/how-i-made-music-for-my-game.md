@@ -24,7 +24,64 @@ python examples/hello_loop.py
 
 Then open the folder in your coding agent and describe the song you want.
 
-Here are some samples to showcase what’s in Tiny Ship! You’ll notice that the main theme, and menu theme share tunes.
+### How it works (in short)
+
+- Instruments are math. Every sound is synthesized from numpy/scipy—no samples—so it’s original and safe to ship. Functions like `lead_note`, `bell_note`, `pluck`, and a procedural drum kit live under `synthkit/`.
+- A song is code on a 16‑step grid. Notes are tiny tuples: `(bar_offset, step, midi, length)`. You arrange layers—pad, bass, drums, melody—bar by bar with an `Arranger`.
+- The renderer mixes, checks the loop seam, and writes an `.ogg` via `ffmpeg`, targeting a consistent LUFS so tracks match in‑game.
+
+Here’s the smallest complete example straight from `examples/hello_loop.py`—progression, a four‑note tune, and a few layers:
+
+```python
+BPM, BARS = 100, 8
+AM, F, C, G = (9, "min"), (5, "maj"), (0, "maj"), (7, "maj")
+PROGRESSION = [AM, F, C, G]
+TUNE = [(0, 0, 76, 4), (0, 6, 72, 2), (0, 8, 69, 6), (1, 0, 72, 4), (1, 6, 77, 2), (1, 8, 76, 6),
+        (2, 0, 79, 4), (2, 6, 76, 2), (2, 8, 72, 6), (3, 0, 74, 8), (3, 8, 71, 8)]
+
+def build():
+    A = Arranger(BPM, BARS, seed=1)
+    for bar in range(BARS):
+        chord = PROGRESSION[bar % 4]
+        A.pad(bar, chord, voice="strings_sus", gain=0.7)
+        A.bass(bar, chord, style="8th", gain=0.9)
+        A.drums(bar, "rock" if bar >= 2 else "half", 0.9)
+    for bar0 in (0, 4):
+        A.melody("lead", TUNE, bar0, "lead", scale=A_MINOR)
+    return A.finish(STEMS, cfg)
+```
+
+Patterns are reusable too. The strings ostinato is literally a little table of indices in `arranger.py`:
+
+```python
+OSTINATO = [0, 2, 3, 2, 0, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2]
+```
+
+And rendering is one line (writes a looping `.ogg`, or `.wav` if `ffmpeg` isn’t on PATH):
+
+```python
+render_track("hello-loop", build, STEMS, out_dir="out")
+```
+
+### The agent skills this ships with
+
+The repo includes small Claude skills in `.claude/skills/` so an agent “knows” how to work with the kit.
+
+- Compose a track (`compose-track`): sets the plan before any code.
+
+  > “Agree, in a few lines, on: where it plays (menu, level, boss), the feel, tempo and key, how long, and what repeats.  
+  > Propose a motif… Prefer an idea that survives being transposed or re‑orchestrated, since games reuse themes across levels.”
+
+- Read the render (`read-the-render`): interpret numbers, not vibes.
+
+  > “One line per instrument: RMS dBFS… Look for a stem missing, one stem 8 dB above neighbours, melody far below accompaniment…  
+  > Keep every track in one game at the same target (examples use −15.5 LUFS).”
+
+There’s also an “add‑instrument” skill for writing a new synthesized voice that fits the conventions.
+
+### Results
+
+You’ll notice that the main theme and menu theme share tunes.
 
 ![Stage 1 theme (short version): the tune fast, on a saw lead](/audio/stage1-short.mp3)
 
@@ -36,10 +93,14 @@ I also tried acoustic instruments. Everything here is still computed from scratc
 
 ![Porch Light: a folk piece from guitar, upright bass, piano, cello, flute and a soft drum kit](/audio/porch-light.mp3)
 
-Some advice:
+I also added a small jukebox to Tiny Ship so you can listen to the whole soundtrack. You can play it in the browser: [Tiny Ship](https://eggsdee99.itch.io/tiny-ship).
 
-* Make several concepts and promote your favorites to full songs.
-* Create motifs on purpose, a short tune or rhythm for each theme in your game (the hero, the villain, the bosses), and use them throughout the score. Play them faster, slower, in a different key or on different instruments. That's what makes the music feel like one story, and it's why the stage and menu themes above sound related.
-* Beware of over-specifying how you want the song to mechanically play. Sometimes it’s best just to let the agent cook, some of my best results were given with only high level direction.
-* Your first outputs may not be the best, keep iterating until you get something that sounds awesome. This may take several iterations.
-* You may want to learn a few music terms but honestly don’t sweat it. SOTA LLMs these days are very good at interpreting how you feel about something.
+### My loop with the agent
+
+- Start with a concept chat (compose‑track’s step 2): where this plays, feel, tempo, key, how long, what repeats. We pick a motif on purpose—a short rhythm or interval shape that can survive re‑orchestration—because I’ll reuse it in stage and menu themes.
+- Rough it in code: chords, a tiny tune, a drum groove. Keep tuned numbers named, keep notes in tables (the kit enforces this).
+- Render fast, then read the report (not guess): stem balance, loop seam, LUFS. Tweak `STEMS` and try again.
+- Make several concepts and promote the favorites to full songs. Reuse motifs across tracks by changing key, speed, or instrument family. That's what makes the music feel like one story, and it’s why the stage and menu themes above sound related.
+- Don’t over‑spec the mechanics; high‑level direction worked better for me. First outputs are rarely the keeper—iterate.
+- You don’t need theory to start. If you can describe “too shrill / too empty / busier drums,” the agent can translate it.
+
