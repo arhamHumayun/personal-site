@@ -1,5 +1,5 @@
 ---
-title: "How I made music for my game with zero experience"
+title: "I had Claude write my game's soundtrack in Python"
 date: "2026-10-06"
 ---
 
