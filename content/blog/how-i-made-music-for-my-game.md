@@ -91,6 +91,8 @@ I also tried acoustic instruments. Everything here is still computed from scratc
 
 ![Porch Light: a folk piece from guitar, upright bass, piano, cello, flute and a soft drum kit](/audio/porch-light.mp3)
 
+I also added a small jukebox to Tiny Ship so you can listen to the whole soundtrack. You can play it in the browser: [Tiny Ship](https://eggsdee99.itch.io/tiny-ship).
+
 ### My loop with the agent
 
 - Start with a concept chat (compose‑track’s step 2): where this plays, feel, tempo, key, how long, what repeats. We pick a motif on purpose—a short rhythm or interval shape that can survive re‑orchestration—because I’ll reuse it in stage and menu themes.
@@ -100,4 +102,3 @@ I also tried acoustic instruments. Everything here is still computed from scratc
 - Don’t over‑spec the mechanics; high‑level direction worked better for me. First outputs are rarely the keeper—iterate.
 - You don’t need theory to start. If you can describe “too shrill / too empty / busier drums,” the agent can translate it.
 
-<!-- TODO: If you want to plug the Tiny Ship jukebox page, add the link here. I didn't find it in this repo. -->
