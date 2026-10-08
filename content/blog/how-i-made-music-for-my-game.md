@@ -1,6 +1,6 @@
 ---
-title: "I had Claude write my game's soundtrack in Python"
-date: "2026-10-06"
+title: "I had Claude write my game's soundtrack using only Python"
+date: "2026-10-08"
 ---
 
 In my quest to add some life to Tiny Ship, I had run into the hard problem of finding music to put into the game. The game is a very simple twin-stick shooter with roguelike elements and borrows a lot from Kingdom Hearts 2 in terms of gameplay mechanics. I wanted a fun, intense, yet enjoyable track that plays while you’re blasting ships.
@@ -99,8 +99,7 @@ I also added a small jukebox to Tiny Ship so you can listen to the whole soundtr
 
 - Start with a concept chat (compose‑track’s step 2): where this plays, feel, tempo, key, how long, what repeats. We pick a motif on purpose—a short rhythm or interval shape that can survive re‑orchestration—because I’ll reuse it in stage and menu themes.
 - Rough it in code: chords, a tiny tune, a drum groove. Keep tuned numbers named, keep notes in tables (the kit enforces this).
-- Render fast, then read the report (not guess): stem balance, loop seam, LUFS. Tweak `STEMS` and try again.
+- Render fast, then read the report (don't guess): stem balance, loop seam, LUFS. Tweak `STEMS` and try again.
 - Make several concepts and promote the favorites to full songs. Reuse motifs across tracks by changing key, speed, or instrument family. That's what makes the music feel like one story, and it’s why the stage and menu themes above sound related.
-- Don’t over‑spec the mechanics; high‑level direction worked better for me. First outputs are rarely the keeper—iterate.
+- Don’t over‑spec the mechanics; high‑level direction worked better for me. First outputs are rarely the keeper—iterate. In other words, let him cook.
 - You don’t need theory to start. If you can describe “too shrill / too empty / busier drums,” the agent can translate it.
-
