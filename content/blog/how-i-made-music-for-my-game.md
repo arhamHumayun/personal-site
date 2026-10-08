@@ -30,6 +30,8 @@ Here are some samples to showcase what’s in Tiny Ship! You’ll notice that th
 
 ![Menu theme (short version): the same tune at half speed, on bells and a soft lead](/audio/menu-short.mp3)
 
+I also added a small jukebox to Tiny Ship so you can listen to the soundtrack. You can play it in the browser: [Tiny Ship](https://eggsdee99.itch.io/tiny-ship).
+
 I also tried acoustic instruments. Everything here is still computed from scratch, no recordings. The guitar and piano are the most convincing, the cello and flute the least.
 
 ![Porch Light: a folk piece from guitar, upright bass, piano, cello, flute and a soft drum kit](/audio/porch-light.mp3)
