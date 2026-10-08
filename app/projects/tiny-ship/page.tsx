@@ -34,6 +34,9 @@ export default function TinyShip() {
             Play on itch.io
           </Link>
         </Button>
+        <Button asChild variant="link" className="p-0 mt-1">
+          <Link href="/projects/synth-music-kit">synth-music-kit</Link>
+        </Button>
       </div>
     </ProjectLayout>
   );
