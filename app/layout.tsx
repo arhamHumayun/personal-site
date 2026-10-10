@@ -20,8 +20,19 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arham Humayun",
+  metadataBase: new URL("https://arhamhumayun.com"),
+  title: {
+    default: "Arham Humayun",
+    template: "%s | Arham Humayun",
+  },
   // description: "Arham Humayun's Personal Website",
+  openGraph: {
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({
