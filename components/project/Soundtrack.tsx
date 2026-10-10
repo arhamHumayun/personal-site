@@ -95,7 +95,7 @@ export function Soundtrack({ title, artist, cover, basePath, tracks }: Soundtrac
             }}
           />
           <div className="relative size-full overflow-hidden rounded-sm border border-border lcd-bezel bg-background">
-            <Image src={cover} alt={`${title} cover`} fill sizes="176px" className="object-contain p-2" />
+            <Image src={cover} alt={`${title} cover`} fill sizes="176px" className="object-cover" />
           </div>
         </div>
 
