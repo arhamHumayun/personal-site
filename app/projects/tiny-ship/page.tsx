@@ -14,17 +14,17 @@ export const metadata = {
 };
 
 const soundtrack = [
-  { title: "Menu theme", info: "Main menu  |  70 BPM  |  D minor  |  the hero's tune, slow and airy", file: "menu-theme" },
-  { title: "Stage 1", info: "Stage 1  |  140 BPM  |  D minor  |  the hero's tune, arcade style", file: "gameplay-theme" },
-  { title: "Stage 1 Boss", info: "Stage 1 boss, and every stage without its own  |  150 BPM  |  E minor, lifting to F#  |  a gallop riff leads, a falling 3+3+2 tune rises into every bar and climbs to a held high note", file: "stage-boss-theme" },
-  { title: "Stage 2", info: "Stage 2  |  135 BPM  |  D minor  |  the hero's tune, turned up", file: "afterburn" },
-  { title: "Stage 2 Boss", info: "Not assigned to a boss yet  |  150 BPM  |  E minor, lifting to F#  |  a call and an answer in every bar: big falling hits, then a run climbing to a held high note", file: "stage-boss-theme-2" },
-  { title: "Stage 3", info: "Stage 3  |  140 BPM  |  A minor  |  the villain's tune takes over", file: "redline" },
-  { title: "Stage 3 Boss", info: "Stage 3 boss  |  150 BPM  |  E minor, lifting to F#  |  a stomp on low brass, guitar and timpani, then a dark rise into held high notes", file: "stage-boss-theme-3" },
-  { title: "Stage 4", info: "Stage 4, Citadel Zero  |  147 BPM  |  D minor to F minor  |  every theme at once", file: "zero-hour" },
-  { title: "Stage 4 Boss", info: "Stage 4 boss, The Sovereign  |  150 BPM  |  E minor, lifting to F#  |  a royal swing between low and high notes, then climbs into held high notes", file: "stage-boss-theme-4" },
-  { title: "Tyrant's Overture", info: "Saved for the credits, not in a stage yet  |  126 BPM  |  A minor  |  the villain's theme, full circle", file: "tyrants-overture" },
-  { title: "Final boss", info: "Final boss, not in a stage yet  |  150 BPM  |  A minor, lifting twice  |  the villain's hooks plus new tunes, the heaviest track", file: "tyrants-wrath" },
+  { title: "Menu theme", file: "menu-theme" },
+  { title: "Stage 1", file: "gameplay-theme" },
+  { title: "Stage 1 Boss", file: "stage-boss-theme" },
+  { title: "Stage 2", file: "afterburn" },
+  { title: "Stage 2 Boss", file: "stage-boss-theme-2" },
+  { title: "Stage 3", file: "redline" },
+  { title: "Stage 3 Boss", file: "stage-boss-theme-3" },
+  { title: "Stage 4", file: "zero-hour" },
+  { title: "Stage 4 Boss", file: "stage-boss-theme-4" },
+  { title: "Tyrant's Overture", file: "tyrants-overture" },
+  { title: "Final boss", file: "tyrants-wrath" },
 ];
 
 export default function TinyShip() {
@@ -63,8 +63,7 @@ export default function TinyShip() {
         <ul className="mt-4 space-y-5">
           {soundtrack.map((t) => (
             <li key={t.file}>
-              <p className="font-medium text-foreground">{t.title}</p>
-              <p className="mb-1 text-sm">{t.info}</p>
+              <p className="mb-1 font-medium text-foreground">{t.title}</p>
               <audio
                 controls
                 preload="none"
