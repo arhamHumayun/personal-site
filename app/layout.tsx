@@ -20,7 +20,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://arhamhumayun.com"),
+  metadataBase: new URL("https://www.arhamhumayun.com"),
   title: {
     default: "Arham Humayun",
     template: "%s | Arham Humayun",
