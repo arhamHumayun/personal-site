@@ -16,9 +16,9 @@ export const metadata = {
 const soundtrack = [
   { title: "Menu Theme", info: "70 BPM, D minor. The hero's tune, slow and airy.", file: "menu-theme" },
   { title: "Stage 1", info: "140 BPM, D minor. The hero's tune, arcade style.", file: "gameplay-theme" },
-  { title: "Stage 1 Boss", info: "150 BPM, E minor. A gallop riff leads and a falling tune climbs to a held high note.", file: "stage-boss-theme" },
+  { title: "Stage 1 and 2 Boss", info: "150 BPM, E minor. Shared by both bosses. A gallop riff leads and a falling tune climbs to a held high note.", file: "stage-boss-theme" },
   { title: "Stage 2", info: "135 BPM, D minor. The hero's tune, turned up.", file: "afterburn" },
-  { title: "Stage 2 Boss", info: "150 BPM, E minor. A call and an answer in every bar. Not in a stage yet.", file: "stage-boss-theme-2" },
+  { title: "Alternate Boss Theme", info: "150 BPM, E minor. A call and an answer in every bar. Not in a stage yet.", file: "stage-boss-theme-2" },
   { title: "Stage 3", info: "140 BPM, A minor. The villain's tune takes over.", file: "redline" },
   { title: "Stage 3 Boss", info: "150 BPM, E minor. A stomp on low brass, guitar and timpani, then a dark rise.", file: "stage-boss-theme-3" },
   { title: "Stage 4", info: "147 BPM, D minor to F minor. Every theme at once.", file: "zero-hour" },
