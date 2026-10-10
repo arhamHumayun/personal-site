@@ -13,6 +13,20 @@ export const metadata = {
   url: "https://arham99.itch.io/tiny-ship",
 };
 
+const soundtrack = [
+  { title: "Menu theme", file: "menu-theme" },
+  { title: "Stage 1", file: "gameplay-theme" },
+  { title: "Stage 1 Boss", file: "stage-boss-theme" },
+  { title: "Stage 2", file: "afterburn" },
+  { title: "Stage 2 Boss", file: "stage-boss-theme-2" },
+  { title: "Stage 3", file: "redline" },
+  { title: "Stage 3 Boss", file: "stage-boss-theme-3" },
+  { title: "Stage 4", file: "zero-hour" },
+  { title: "Stage 4 Boss", file: "stage-boss-theme-4" },
+  { title: "Tyrant's Overture", file: "tyrants-overture" },
+  { title: "Final boss", file: "tyrants-wrath" },
+];
+
 export default function TinyShip() {
   return (
     <ProjectLayout>
@@ -37,6 +51,28 @@ export default function TinyShip() {
         <Button asChild variant="link" className="p-0 mt-1">
           <Link href="/projects/synth-music-kit">synth-music-kit</Link>
         </Button>
+        <h2 className="mt-8 text-xl font-semibold text-foreground">Soundtrack</h2>
+        <P>
+          Every track is synthesized from scratch, no samples. In the game they loop seamlessly;
+          here they play once through. I wrote about how they were made in{" "}
+          <Link href="/blog/how-i-made-music-for-my-game" className="underline">
+            this post
+          </Link>
+          .
+        </P>
+        <ul className="mt-4 space-y-5">
+          {soundtrack.map((t) => (
+            <li key={t.file}>
+              <p className="mb-1 font-medium text-foreground">{t.title}</p>
+              <audio
+                controls
+                preload="none"
+                src={`/audio/tiny-ship/${t.file}.mp3`}
+                className="w-full"
+              />
+            </li>
+          ))}
+        </ul>
       </div>
     </ProjectLayout>
   );
