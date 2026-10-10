@@ -3,6 +3,8 @@ import { ProjectHeader } from '@/components/project/ProjectHeader';
 import { P } from '@/components/typography';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Soundtrack } from '@/components/project/Soundtrack';
+import { SectionHeading } from '@/components/home/SectionHeading';
 
 export const metadata = {
   title: "Tiny Ship",
@@ -51,7 +53,14 @@ export default function TinyShip() {
         <Button asChild variant="link" className="p-0 mt-1">
           <Link href="/projects/synth-music-kit">synth-music-kit</Link>
         </Button>
-        <h2 className="mt-8 text-xl font-semibold text-foreground">Soundtrack</h2>
+        <SectionHeading>Soundtrack</SectionHeading>
+        <Soundtrack
+          title="Tiny Ship"
+          artist="Arham Humayun"
+          cover={metadata.img}
+          basePath="/audio/tiny-ship"
+          tracks={soundtrack}
+        />
         <P>
           Every track is synthesized from scratch, no samples. In the game they loop seamlessly;
           here they play once through. I wrote about how they were made in{" "}
@@ -60,19 +69,6 @@ export default function TinyShip() {
           </Link>
           .
         </P>
-        <ul className="mt-4 space-y-5">
-          {soundtrack.map((t) => (
-            <li key={t.file}>
-              <p className="mb-1 font-medium text-foreground">{t.title}</p>
-              <audio
-                controls
-                preload="none"
-                src={`/audio/tiny-ship/${t.file}.mp3`}
-                className="w-full"
-              />
-            </li>
-          ))}
-        </ul>
       </div>
     </ProjectLayout>
   );
