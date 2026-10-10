@@ -18,16 +18,16 @@ export const metadata = {
 
 const soundtrack = [
   { title: "Menu theme", file: "menu-theme" },
-  { title: "Stage 1", file: "gameplay-theme" },
-  { title: "Stage 1 Boss", file: "stage-boss-theme" },
-  { title: "Stage 2", file: "afterburn" },
-  { title: "Stage 2 Boss", file: "stage-boss-theme-2" },
-  { title: "Stage 3", file: "redline" },
-  { title: "Stage 3 Boss", file: "stage-boss-theme-3" },
-  { title: "Stage 4", file: "zero-hour" },
-  { title: "Stage 4 Boss", file: "stage-boss-theme-4" },
-  { title: "Tyrant's Overture", file: "tyrants-overture" },
-  { title: "Final boss", file: "tyrants-wrath" },
+  { title: "Stage 1 Level", file: "stage-1-level" },
+  { title: "Stage 1 Boss", file: "stage-1-boss" },
+  { title: "Stage 2 Level", file: "stage-2-level" },
+  { title: "Stage 2 Boss", file: "stage-2-boss" },
+  { title: "Stage 3 Level", file: "stage-3-level" },
+  { title: "Stage 3 Boss", file: "stage-3-boss" },
+  { title: "Stage 4 Level", file: "stage-4-level" },
+  { title: "Stage 4 Boss", file: "stage-4-boss" },
+  { title: "Final Boss (concept 1)", file: "final-boss-concept-1" },
+  { title: "Final Boss (concept 2)", file: "final-boss-concept-2" },
 ];
 
 export default function TinyShip() {
