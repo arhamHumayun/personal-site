@@ -40,7 +40,7 @@ function useDiceLayout(): DiceLayoutState {
 }
 
 const PANEL_CLASS =
-  "absolute top-1/2 -translate-y-1/2 h-[min(52rem,calc(100vh-8rem))] w-[calc(50%-21rem-2.5rem-1rem)]";
+  "pointer-events-auto absolute top-1/2 -translate-y-1/2 h-[min(52rem,calc(100vh-8rem))] w-[calc(50%-21rem-2.5rem-1rem)]";
 
 export function AsciiCubesDecor() {
   const colors = useThemeColors();

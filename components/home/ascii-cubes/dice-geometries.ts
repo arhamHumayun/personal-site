@@ -122,10 +122,13 @@ const BASE_ROTATIONS = [
   { x: 0.007, y: 0.014, z: 0.003 },
 ];
 
+/** Global multiplier on idle spin (1 = BASE_ROTATIONS as written) */
+const IDLE_SPEED_SCALE = 0.5;
+
 export function createDieRotations(direction: 1 | -1) {
   return BASE_ROTATIONS.map((speed) => ({
-    x: speed.x * direction,
-    y: speed.y * direction,
-    z: speed.z * direction,
+    x: speed.x * direction * IDLE_SPEED_SCALE,
+    y: speed.y * direction * IDLE_SPEED_SCALE,
+    z: speed.z * direction * IDLE_SPEED_SCALE,
   }));
 }
