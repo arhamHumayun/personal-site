@@ -6,8 +6,10 @@ import Link from 'next/link';
 
 export const metadata = {
   title: "Monster Labs",
-  cardDescription: "D&D monsters and item generator. Revenue generating SaaS.",
-  description: "Monster Labs is a SaaS platform that helps you create Dungeons & Dragons monsters, characters, and magic items. Live and serving real customers!",
+  cardDescription:
+    "D&D creatures, items, spells, and sessions. Breed two monsters or start from a picture.",
+  description:
+    "Monster Labs is an AI tool for D&D. Describe a creature, item, spell, or session and it writes the stat block. You can also breed two monsters or start from a picture.",
   img: "/images/monsterlabs.webp",
   url: "https://monsterlabs.app",
 };
@@ -20,19 +22,20 @@ export default function MonsterLabs() {
         image={metadata.img}
       />
       <P>
-        Monster Labs is a SaaS platform that helps you create Dungeons & Dragons monsters, characters, and magic items. 
-        Live and serving real customers!
-        </P>
-        <Button
-          asChild
-          variant={'link'}
-          className='p-0 mt-2'
+        Monster Labs is an AI tool for D&D. Describe a creature, item, spell, or
+        session and it writes the stat block. You can also breed two monsters or
+        start from a picture.
+      </P>
+      <Button
+        asChild
+        variant={'link'}
+        className='p-0 mt-2'
+      >
+        <Link
+          href="https://monsterlabs.app"
+          target="_blank"
         >
-          <Link
-            href="https://monsterlabs.app"
-            target="_blank"
-          >
-            Visit Monster Labs
+          Visit Monster Labs
         </Link>
       </Button>
     </ProjectLayout>
