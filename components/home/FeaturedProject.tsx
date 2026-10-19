@@ -4,7 +4,7 @@ import Link from "next/link";
 interface FeaturedProjectProps {
   title: string;
   description: string;
-  img: string;
+  img?: string;
   href: string;
   index?: number;
 }
@@ -23,14 +23,16 @@ export function FeaturedProject({
           [{String(index).padStart(2, "0")}]
         </p>
       )}
-      <div className="relative w-full aspect-[16/9] overflow-hidden rounded-md border border-border lcd-bezel transition-colors duration-300 group-hover:border-link/35">
-        <Image
-          src={img}
-          alt={title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-        />
-      </div>
+      {img ? (
+        <div className="relative w-full aspect-[16/9] overflow-hidden rounded-md border border-border bg-muted/40 lcd-bezel transition-colors duration-300 group-hover:border-link/35">
+          <Image
+            src={img}
+            alt={title}
+            fill
+            className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      ) : null}
       <h3 className="mt-3 font-semibold group-hover:underline underline-offset-4">
         {title}
       </h3>

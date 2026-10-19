@@ -10,7 +10,6 @@ export const metadata = {
     "A Python synth library that lets a coding agent compose real game music. It wrote the whole Tiny Ship soundtrack.",
   description:
     "A Python synth library that lets a coding agent compose real game music from code — no samples or recordings. It wrote the entire Tiny Ship soundtrack.",
-  img: "/images/post_img.webp",
   url: "https://github.com/arhamHumayun/synth-music-kit",
 };
 
@@ -20,7 +19,6 @@ export default function SynthMusicKit() {
       <ProjectHeader
         title={metadata.title}
         description={metadata.description}
-        image={metadata.img}
       />
       <div className="text-gray-700 dark:text-gray-300">
         <P>

@@ -4,7 +4,7 @@ interface ProjectGridItem {
   slug: string;
   title: string;
   description: string;
-  img: string;
+  img?: string;
 }
 
 interface ProjectGridProps {
