@@ -12,13 +12,12 @@ export const ProjectHeader: React.FC<ProjectHeaderProps> = ({ title, description
   return (
     <div className="mb-8">
       {image && (
-        <div className="relative w-full h-64 mb-6">
+        <div className="relative w-full h-64 mb-6 overflow-hidden rounded-lg bg-muted/40">
           <Image
             src={image}
             alt={title}
             fill
-            style={{ objectFit: 'contain' }}
-            className="rounded-lg bg-white dark:bg-zinc-900"
+            className="object-contain"
             priority
           />
         </div>

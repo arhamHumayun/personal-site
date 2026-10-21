@@ -14,14 +14,13 @@ export const BlogPostHeader: React.FC<BlogPostHeaderProps> = ({ title, date, her
     <div className="mb-8"> {/* Add some bottom margin */}
       {/* Optional: Display Hero Image */}
       {heroImage && (
-        <div className="relative w-full h-64 sm:h-96 mb-8">
+        <div className="relative w-full h-64 sm:h-96 mb-8 overflow-hidden rounded-lg bg-muted/40">
           <Image
             src={heroImage}
             alt={title}
             fill
-            style={{ objectFit: 'cover' }}
-            priority // Load hero image faster
-            className="rounded-lg"
+            priority
+            className="object-contain"
           />
         </div>
       )}
