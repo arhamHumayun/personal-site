@@ -4,6 +4,7 @@ import { BlogPostLayout } from "@/components/blog/BlogPostLayout";
 import { BlogPostHeader } from "@/components/blog/BlogPostHeader";
 import { MarkdownPostContent } from "@/components/blog/MarkdownPostContent";
 import {
+  derivePostDescription,
   getMarkdownPost,
   getMarkdownPostSlugs,
   getTsxPostSlugs,
@@ -31,18 +32,22 @@ export async function generateMetadata({
     return { title: "Post not found" };
   }
 
-  const imageUrl = post.heroImage
-    ? post.heroImage
-    : `/blog/${slug}/opengraph-image`;
+  const description = derivePostDescription(post.content);
 
   return {
     title: post.title,
+    description,
     openGraph: {
-      images: [imageUrl],
+      title: post.title,
+      description,
+      type: "article",
+      siteName: "Arham Humayun",
+      locale: "en_US",
     },
     twitter: {
       card: "summary_large_image",
-      images: [imageUrl],
+      title: post.title,
+      description,
     },
   };
 }
