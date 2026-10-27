@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 
 /** Slugs listed first (in order); remaining projects follow alphabetically by slug. */
-const PROJECT_SLUG_PRIORITY: string[] = ["tiny-ship", "monster-labs", "veilborn"];
+const PROJECT_SLUG_PRIORITY: string[] = ["tiny-ship", "monster-labs", "veilborn", "synth-music-kit"];
 
 function sortProjectSlugs(slugs: string[]) {
   return [...slugs].sort((a, b) => {
