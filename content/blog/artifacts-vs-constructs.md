@@ -29,6 +29,8 @@ Low quality work has also long existed before AI. Any time making something gets
 
 ![Théâtre d'Opéra Spatial. Made with Midjourney in 2022 and won an art contest](/images/theatre-d-opera-spatial.jpg)
 
+*Théâtre D'opéra Spatial by Jason M. Allen, made with Midjourney. It won first place in digital art at the 2022 Colorado State Fair.*
+
 This is not a bad thing, quite the opposite actually. I fail to see more people exploring their creativity as anything but good. If you're a creative in any field, all you need to do is keep doing what you should've been doing all along. Be thoughtful, develop your taste and judgment, and try not to release tons of garbage.
 
 This is the mindset I have when I'm working on [Tiny Ship](/projects/tiny-ship). It started as an entirely hand written game but now with AI I'm able to make custom models much quicker, add gameplay mechanics, and even create [bespoke music](/projects/synth-music-kit). Does that mean I'm no longer the author? Maybe, a little. Now many aspects of it feel like something I commissioned. I didn't make the music but [I got an AI to make it](/blog/how-i-made-music-for-my-game) and it passes a bar of quality that I can deem acceptable for now. Much of the code now is more than I can remember or even comprehend, but I can justify and explain every gameplay mechanic. 
