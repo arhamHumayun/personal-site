@@ -27,14 +27,16 @@ I'm not going to argue these points in this post. Sure, many people will rate th
 
 Low quality work has also long existed before AI. Any time making something gets easier, new people are able to participate in it. Unity created many indie devs since it was an accessible, and easy to learn game engine but for those who remember, there was a stigma on games made with Unity back then. People associated unity games with low quality because so many were being made. Same thing happened with garage band, instagram filters, any possible product that made making the thing easier. New people join, the bar for entry is lowered and then you'll see a wave of low quality creations. 
 
-![Théâtre d'Opéra Spatial. Made with Midjourney in 2022 and won an art contest](/images/theatre-d-opera-spatial.jpg)
-
-*Théâtre D'opéra Spatial by Jason M. Allen, made with Midjourney. It won first place in digital art at the 2022 Colorado State Fair.*
-
 This is not a bad thing, quite the opposite actually. I fail to see more people exploring their creativity as anything but good. If you're a creative in any field, all you need to do is keep doing what you should've been doing all along. Be thoughtful, develop your taste and judgment, and try not to release tons of garbage.
 
 This is the mindset I have when I'm working on [Tiny Ship](/projects/tiny-ship). It started as an entirely hand written game but now with AI I'm able to make custom models much quicker, add gameplay mechanics, and even create [bespoke music](/projects/synth-music-kit). Does that mean I'm no longer the author? Maybe, a little. Now many aspects of it feel like something I commissioned. I didn't make the music but [I got an AI to make it](/blog/how-i-made-music-for-my-game) and it passes a bar of quality that I can deem acceptable for now. Much of the code now is more than I can remember or even comprehend, but I can justify and explain every gameplay mechanic. 
 
 People have been contracting developers, musicians, and artists the whole time. Now we have AI. It's way cheaper, faster, more accessible, and honestly sometimes even better.
 
-Make things that interest you. Enjoy it. Share it.
+![Théâtre d'Opéra Spatial. Made with Midjourney in 2022 and won an art contest](/images/theatre-d-opera-spatial.jpg)
+
+*Théâtre D'opéra Spatial by Jason M. Allen, made with Midjourney. It won first place in digital art at the 2022 Colorado State Fair.*
+
+AI songs are already charting. Most software is now written with AI. And right now the Kingdom Hearts community is having a blast with a mod that puts KH2 Sora's moveset into KH1, while arguing about how the code got written. Even though these types of mods have existed for a long time for many kingdom hearts games.
+
+Make things that interest you unapologetically. Enjoy it. Share it.
