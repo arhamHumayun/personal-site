@@ -86,6 +86,41 @@ export function getMarkdownPost(slug: string): MarkdownPost | null {
   };
 }
 
+export function derivePostDescription(
+  content: string,
+  maxLength = 160
+): string {
+  const blocks = content.replace(/\r\n/g, "\n").split(/\n\s*\n/);
+
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+    if (/^#{1,6}\s/.test(trimmed)) continue;
+    if (/^>/.test(trimmed)) continue;
+    if (/^```/.test(trimmed)) continue;
+    if (/^!\[[^\]]*\]\(/.test(trimmed)) continue;
+    if (/^[-*]\s/.test(trimmed)) continue;
+    if (/^\|/.test(trimmed)) continue;
+
+    const text = trimmed
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+      .replace(/[*_~`]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (text.length < 24) continue;
+    if (text.length <= maxLength) return text;
+
+    const limit = maxLength - 1;
+    const sliced = text.slice(0, limit);
+    const lastSpace = sliced.lastIndexOf(" ");
+    const cut = lastSpace >= Math.floor(maxLength * 0.6) ? lastSpace : limit;
+    return `${sliced.slice(0, cut)}…`;
+  }
+
+  return "A post by Arham Humayun.";
+}
+
 export async function getPostMetadata(
   slug: string
 ): Promise<BlogPostMetadata | null> {
