@@ -2,6 +2,7 @@ export const NAV_PATHS = {
   home: "~/home",
   writing: "~/writing",
   projects: "~/projects",
+  puzzle: "~/puzzle",
   contact: "~/contact",
 } as const;
 
@@ -26,5 +27,6 @@ export function getCurrentNavPath(pathname: string): string {
 export const navItems = [
   { label: "Writing", href: "/blog", path: NAV_PATHS.writing },
   { label: "Projects", href: "/projects", path: NAV_PATHS.projects },
+  { label: "Puzzle", href: "/puzzle", path: NAV_PATHS.puzzle },
   { label: "Contact", href: "/contact", path: NAV_PATHS.contact },
 ] as const;

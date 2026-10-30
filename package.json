@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "puzzles:prove": "cd puzzles/ice-slide && bend PROOF.bend",
+    "puzzles:build": "node scripts/build-puzzles.mjs"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.10",
@@ -37,6 +40,7 @@
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.2.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.12"
   }
 }
