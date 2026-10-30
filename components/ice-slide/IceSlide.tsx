@@ -212,21 +212,23 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
         >
           <div
             className="grid h-full w-full"
-            style={{ gridTemplateColumns: `repeat(${puzzle.width}, minmax(0, 1fr))` }}
+            style={{
+              gridTemplateColumns: `repeat(${puzzle.width}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${puzzle.height}, minmax(0, 1fr))`,
+            }}
           >
             {puzzle.tiles.flatMap((row, y) =>
               [...row].map((tile, x) => {
                 const exit = samePoint([x, y], puzzle.exit);
                 return (
-                  <div key={`${x},${y}`} className="p-[1.5px]">
+                  <div key={`${x},${y}`} className="relative p-[1.5px]">
                     <div
                       className={cn(
-                        "flex h-full w-full items-center justify-center rounded-[3px]",
+                        "h-full w-full rounded-[3px]",
                         tile === "#" ? "bg-muted-foreground/45" : "bg-muted/55",
                       )}
-                    >
-                      {exit && <div className="size-[58%] rounded-full border-2 border-link" />}
-                    </div>
+                    />
+                    {exit && <div className="absolute inset-[18%] rounded-full border-2 border-link" />}
                   </div>
                 );
               }),
@@ -246,8 +248,9 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
             <div
               className={cn(
                 "absolute inset-[18%] rounded-full bg-primary shadow-sm transition-transform duration-300",
-                solved && "scale-[0.82] bg-link",
+                solved && "bg-link",
               )}
+              style={{ scale: solved ? 0.6 : 1 }}
             />
           </div>
         </div>
