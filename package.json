@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "puzzles:generate": "node scripts/generate-puzzles.mjs",
-    "puzzles:prove": "cd puzzles/ice-slide && bend PROOF.bend"
+    "puzzles:prove": "cd puzzles/ice-slide && bend PROOF.bend",
+    "puzzles:build": "node scripts/build-puzzles.mjs"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.10",

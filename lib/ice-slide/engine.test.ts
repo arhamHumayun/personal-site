@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import puzzles from "../../public/data/ice-slide.json";
-import solutions from "../../puzzles/ice-slide/solutions.json";
-import { isBlocked, replay, samePoint, slide, type Dir, type Point, type Puzzle } from "./engine";
+import config from "../../puzzles/ice-slide/config.json";
+import { dailyPuzzle } from "./daily";
+import { isBlocked, localDate, replay, samePoint, slide, type Dir, type Point, type Puzzle } from "./engine";
 
-const all = puzzles as unknown as Puzzle[];
+const YEARS = 100;
 
 function shortest(puzzle: Puzzle): number {
   const key = ([x, y]: Point) => y * puzzle.width + x;
@@ -20,22 +20,30 @@ function shortest(puzzle: Puzzle): number {
   return Infinity;
 }
 
-describe("ice slide", () => {
-  test("solutions line up with puzzles", () => {
-    expect(solutions.length).toBe(all.length);
-    solutions.forEach((s, i) => {
-      expect(s.date).toBe(all[i].date);
-      expect(s.seed).toBe(all[i].seed);
-    });
-  });
+function* days(from: string, count: number) {
+  const d = new Date(`${from}T12:00:00`);
+  for (let i = 0; i < count; i++, d.setDate(d.getDate() + 1)) yield localDate(d);
+}
 
-  test.each(all.map((p, i) => [p.date, p, solutions[i].solution] as const))(
-    "%s: the Bend solution reaches the exit in par moves",
-    (_, puzzle, solution) => {
-      expect(isBlocked(puzzle.tiles, puzzle.start)).toBe(false);
-      expect(replay(puzzle, solution)).toEqual(puzzle.exit);
-      expect(solution.length).toBe(puzzle.par);
-      expect(shortest(puzzle)).toBe(puzzle.par);
-    },
-  );
+describe("ice slide", () => {
+  test(`every day for ${YEARS} years replays the Bend solution in par moves`, () => {
+    const failures: string[] = [];
+    for (const date of days(config.epoch, Math.round(YEARS * 365.25))) {
+      const daily = dailyPuzzle(date);
+      if (!daily) {
+        failures.push(`${date}: no puzzle`);
+        continue;
+      }
+      const { puzzle, solution } = daily;
+      const checks = {
+        "start on ice": !isBlocked(puzzle.tiles, puzzle.start),
+        "solution reaches exit": samePoint(replay(puzzle, solution), puzzle.exit),
+        "solution is par long": solution.length === puzzle.par,
+        "par is shortest": shortest(puzzle) === puzzle.par,
+        "par in range": puzzle.par >= config.min && puzzle.par <= config.max,
+      };
+      for (const [name, ok] of Object.entries(checks)) if (!ok) failures.push(`${date}: ${name}`);
+    }
+    expect(failures).toEqual([]);
+  }, 120_000);
 });

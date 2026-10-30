@@ -1,8 +1,17 @@
 "use client";
 
 import { RotateCcw, Share2, Undo2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type PointerEvent,
+} from "react";
 import { Button } from "@/components/ui/button";
+import { dailyPuzzle } from "@/lib/ice-slide/daily";
 import {
   localDate,
   puzzleNumber,
@@ -29,6 +38,8 @@ const KEYS: Record<string, Dir> = {
 
 const SWIPE = 24;
 
+const subscribe = () => () => {};
+
 function distance(a: Point, b: Point) {
   return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]);
 }
@@ -41,29 +52,16 @@ function towards(dx: number, dy: number): Dir {
   return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "R" : "L") : dy > 0 ? "D" : "U";
 }
 
-type Load = { kind: "loading" } | { kind: "missing" } | { kind: "ready"; puzzle: Puzzle };
-
 export function IceSlide() {
-  const [load, setLoad] = useState<Load>({ kind: "loading" });
-
-  useEffect(() => {
-    const today = localDate();
-    fetch("/data/ice-slide.json")
-      .then((res) => res.json() as Promise<Puzzle[]>)
-      .then((all) => {
-        const puzzle = all.find((p) => p.date === today);
-        setLoad(puzzle ? { kind: "ready", puzzle } : { kind: "missing" });
-      })
-      .catch(() => setLoad({ kind: "missing" }));
-  }, []);
-
-  if (load.kind === "ready") return <Game key={load.puzzle.date} puzzle={load.puzzle} />;
+  const today = useSyncExternalStore(subscribe, localDate, () => null);
+  const daily = useMemo(() => (today ? dailyPuzzle(today) : null), [today]);
+  if (daily) return <Game key={daily.puzzle.date} puzzle={daily.puzzle} />;
 
   return (
     <div className="mx-auto w-full max-w-[30rem]">
       <Header />
       <div className="flex aspect-square items-center justify-center rounded-md border border-border bg-card lcd-bezel">
-        {load.kind === "missing" && <p className="meta-label">No puzzle today</p>}
+        {today && <p className="meta-label">No puzzle today</p>}
       </div>
     </div>
   );
