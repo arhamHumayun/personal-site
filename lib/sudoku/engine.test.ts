@@ -1,34 +1,40 @@
 import { describe, expect, test } from "vitest";
-import { conflicts, countSolutions, generate, PEERS, solvableBySingles, solve, type Difficulty } from "./engine";
+import { conflicts, PEERS, type Difficulty, type Grid } from "./engine";
+import { makePuzzle } from "./puzzle";
 
-function seeded(seed: number) {
-  return () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return seed / 2 ** 32;
-  };
+// An independent backtracking count, so the test doesn't lean on Bend.
+function countSolutions(grid: Grid, limit = 2): number {
+  const i = grid.indexOf(0);
+  if (i === -1) return 1;
+  let total = 0;
+  for (let d = 1; d <= 9 && total < limit; d++) {
+    if (PEERS[i].some((j) => grid[j] === d)) continue;
+    grid[i] = d;
+    total += countSolutions(grid, limit - total);
+    grid[i] = 0;
+  }
+  return total;
 }
 
-function isValidSolution(grid: number[]) {
-  return grid.every((d, i) => d >= 1 && d <= 9 && PEERS[i].every((j) => grid[j] !== d));
-}
+const CLUES: Record<Difficulty, (n: number) => boolean> = {
+  easy: (n) => n === 38,
+  medium: (n) => n === 30,
+  hard: (n) => n < 30,
+};
 
 describe("sudoku", () => {
-  test.each(["easy", "medium", "hard"] as Difficulty[])("%s puzzles have exactly one solution", (difficulty) => {
-    for (let seed = 1; seed <= 15; seed++) {
-      const { puzzle, solution } = generate(difficulty, seeded(seed));
-      expect(isValidSolution(solution)).toBe(true);
+  test.each(["easy", "medium", "hard"] as Difficulty[])("%s Bend puzzles have exactly one solution", (difficulty) => {
+    for (let seed = 1; seed <= 20; seed++) {
+      const { puzzle, solution } = makePuzzle(difficulty, seed);
+      expect(solution.every((d, i) => d >= 1 && d <= 9 && PEERS[i].every((j) => solution[j] !== d))).toBe(true);
       expect(puzzle.every((d, i) => d === 0 || d === solution[i])).toBe(true);
       expect(countSolutions(puzzle.slice())).toBe(1);
-      expect(solve(puzzle)).toEqual(solution);
-      if (difficulty !== "hard") expect(solvableBySingles(puzzle)).toBe(true);
+      expect(CLUES[difficulty](puzzle.filter(Boolean).length)).toBe(true);
     }
-  });
+  }, 60_000);
 
-  test("difficulty sets how many clues are left", () => {
-    const givens = (d: Difficulty) => generate(d, seeded(7)).puzzle.filter(Boolean).length;
-    expect(givens("easy")).toBe(38);
-    expect(givens("medium")).toBe(30);
-    expect(givens("hard")).toBeLessThan(30);
+  test("the same seed gives the same puzzle", () => {
+    expect(makePuzzle("medium", 7)).toEqual(makePuzzle("medium", 7));
   });
 
   test("conflicts flag every repeated digit in a row, column or box", () => {

@@ -3,7 +3,8 @@
 import { Eraser, Pencil, RotateCcw, Undo2 } from "lucide-react";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { Button } from "@/components/ui/button";
-import { BOX, COL, conflicts, generate, PEERS, ROW, type Difficulty, type Grid } from "@/lib/sudoku/engine";
+import { BOX, COL, conflicts, PEERS, ROW, type Difficulty, type Grid } from "@/lib/sudoku/engine";
+import { makePuzzle } from "@/lib/sudoku/puzzle";
 import { cn } from "@/lib/utils";
 
 const LEVELS: Record<Difficulty, string> = { easy: "Easy", medium: "Medium", hard: "Hard" };
@@ -20,7 +21,7 @@ interface State {
 }
 
 function fresh(difficulty: Difficulty): State {
-  const { puzzle, solution } = generate(difficulty);
+  const { puzzle, solution } = makePuzzle(difficulty, crypto.getRandomValues(new Uint32Array(1))[0]);
   return { difficulty, puzzle, solution, entries: puzzle.slice(), notes: Array(81).fill(0), elapsed: 0 };
 }
 
@@ -48,7 +49,17 @@ const subscribe = () => () => {};
 
 export function Sudoku() {
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
-  return <div className="mx-auto w-full max-w-[30rem]">{mounted ? <Game /> : <Header />}</div>;
+  return (
+    <div className="mx-auto w-full max-w-[30rem]">
+      {mounted ? <Game /> : <Header />}
+      <a
+        href="https://bend-lang.com"
+        className="meta-label mt-10 block text-center transition-colors hover:text-link"
+      >
+        Made with Bend
+      </a>
+    </div>
+  );
 }
 
 function Header({ children }: { children?: React.ReactNode }) {
