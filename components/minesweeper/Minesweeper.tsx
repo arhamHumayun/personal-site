@@ -3,7 +3,8 @@
 import { Flag, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore, type MouseEvent, type PointerEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { count, emptyBoard, flagsLeft, reveal, toggleFlag, type Board } from "@/lib/minesweeper/engine";
+import { count, emptyBoard, flagsLeft, reveal, start, toggleFlag, type Board } from "@/lib/minesweeper/engine";
+import { layout } from "@/lib/minesweeper/layout";
 import { cn } from "@/lib/utils";
 
 const LEVELS = {
@@ -58,7 +59,17 @@ const subscribe = () => () => {};
 
 export function Minesweeper() {
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
-  return mounted ? <Game /> : <Header />;
+  return (
+    <>
+      {mounted ? <Game /> : <Header />}
+      <a
+        href="https://bend-lang.com"
+        className="meta-label mt-10 block text-center transition-colors hover:text-link"
+      >
+        Made with Bend
+      </a>
+    </>
+  );
 }
 
 function Header({ children }: { children?: React.ReactNode }) {
@@ -150,7 +161,10 @@ function Game() {
     cancelPress();
     const i = cellAt(e);
     if (i === null || press.current.fired) return;
-    apply(flagMode && !board.open[i] ? toggleFlag(board, i) : reveal(board, i));
+    if (flagMode && !board.open[i]) return apply(toggleFlag(board, i));
+    const seed = crypto.getRandomValues(new Uint32Array(1))[0];
+    const live = board.status === "ready" ? start(board, layout(board.width, board.height, board.mines, i, seed)) : board;
+    apply(reveal(live, i));
   };
 
   const onContextMenu = (e: MouseEvent<HTMLDivElement>) => {

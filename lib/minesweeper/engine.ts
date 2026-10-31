@@ -43,18 +43,8 @@ export function count(board: Board, i: number): number {
   return neighbors(board, i).filter((j) => board.mine[j]).length;
 }
 
-// The first click and its neighbours are always clear, so it opens an area.
-function layMines(board: Board, first: number, random: () => number): boolean[] {
-  const keep = new Set([first, ...neighbors(board, first)]);
-  const spots = board.mine.map((_, i) => i).filter((i) => !keep.has(i));
-  const pool = spots.length >= board.mines ? spots : board.mine.map((_, i) => i).filter((i) => i !== first);
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  const mine = Array(board.mine.length).fill(false);
-  for (const i of pool.slice(0, board.mines)) mine[i] = true;
-  return mine;
+export function start(board: Board, mine: boolean[]): Board {
+  return { ...board, mine, status: "playing" };
 }
 
 function settle(board: Board): Board {
@@ -78,9 +68,8 @@ function openFrom(board: Board, start: number[]): Board {
   return settle({ ...board, open });
 }
 
-export function reveal(board: Board, i: number, random: () => number = Math.random): Board {
-  if (board.status === "won" || board.status === "lost" || board.flag[i]) return board;
-  if (board.status === "ready") board = { ...board, mine: layMines(board, i, random), status: "playing" };
+export function reveal(board: Board, i: number): Board {
+  if (board.status !== "playing" || board.flag[i]) return board;
   if (board.open[i]) return chord(board, i);
   return openFrom(board, [i]);
 }

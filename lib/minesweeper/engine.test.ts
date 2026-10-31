@@ -1,12 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { chord, count, emptyBoard, flagsLeft, neighbors, reveal, toggleFlag, type Board } from "./engine";
-
-function seeded(seed: number) {
-  return () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    return seed / 2 ** 32;
-  };
-}
+import { chord, count, emptyBoard, flagsLeft, neighbors, reveal, start, toggleFlag, type Board } from "./engine";
+import { layout } from "./layout";
 
 function withMines(width: number, height: number, mines: number[]): Board {
   const board = emptyBoard(width, height, mines.length);
@@ -15,14 +9,20 @@ function withMines(width: number, height: number, mines: number[]): Board {
 }
 
 describe("minesweeper", () => {
-  test("the first click and its neighbours are never mines, and the count is exact", () => {
-    for (let seed = 1; seed <= 500; seed++) {
-      const first = seed % (16 * 16);
-      const board = reveal(emptyBoard(16, 16, 40), first, seeded(seed));
-      expect(board.mine.filter(Boolean)).toHaveLength(40);
+  test.each([
+    [9, 9, 10],
+    [16, 16, 40],
+    [30, 16, 99],
+    [16, 30, 99],
+  ])("Bend boards %ix%i with %i mines: exact count, first click opens an area", (width, height, mines) => {
+    for (let seed = 1; seed <= 300; seed++) {
+      const first = (seed * 37) % (width * height);
+      const board = reveal(start(emptyBoard(width, height, mines), layout(width, height, mines, first, seed)), first);
+      expect(board.mine).toHaveLength(width * height);
+      expect(board.mine.filter(Boolean)).toHaveLength(mines);
       expect([first, ...neighbors(board, first)].some((i) => board.mine[i])).toBe(false);
-      expect(board.status).toBe("playing");
       expect(count(board, first)).toBe(0);
+      expect(board.status).not.toBe("lost");
     }
   });
 
