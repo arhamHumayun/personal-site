@@ -24,17 +24,14 @@ export default function Minesweeper() {
           A complete remake of the classic Minesweeper game built with Pygame. Built mostly in one day.
           One of my first projects exploring game development and Python programming.
         </P>
-        <Button
-          asChild
-          variant={'link'}
-          className='p-0 mt-2'
-        >
-          <Link
-            href="https://github.com/arhamHumayun/Minesweeper"
-          >
-            View on GitHub
-          </Link>
-        </Button>
+        <div className="mt-2 flex gap-6">
+          <Button asChild variant={'link'} className='p-0'>
+            <Link href="/play/minesweeper">Play in the browser</Link>
+          </Button>
+          <Button asChild variant={'link'} className='p-0'>
+            <Link href="https://github.com/arhamHumayun/Minesweeper">View on GitHub</Link>
+          </Button>
+        </div>
       </div>
     </ProjectLayout>
   );
