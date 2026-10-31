@@ -1,15 +1,11 @@
 // Mirrors puzzles/ice-slide/ice.bend. engine.test.ts replays every Bend
 // solution through this file, so the two rule sets can't drift apart.
 
-import config from "../../puzzles/ice-slide/config.json";
-
-export const ICE_SLIDE_EPOCH = config.epoch;
-
 export type Dir = "U" | "D" | "L" | "R";
 export type Point = readonly [number, number];
 
 export interface Puzzle {
-  date: string;
+  level: number;
   seed: number;
   width: number;
   height: number;
@@ -43,19 +39,4 @@ export function replay(puzzle: Puzzle, moves: string): Point {
 
 export function samePoint(a: Point, b: Point): boolean {
   return a[0] === b[0] && a[1] === b[1];
-}
-
-export function puzzleNumber(date: string): number {
-  return Math.round((Date.parse(date) - Date.parse(ICE_SLIDE_EPOCH)) / 86_400_000) + 1;
-}
-
-export function localDate(now = new Date()): string {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-}
-
-export function previousDate(date: string): string {
-  const d = new Date(`${date}T12:00:00`);
-  d.setDate(d.getDate() - 1);
-  return localDate(d);
 }

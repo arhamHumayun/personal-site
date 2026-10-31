@@ -1,9 +1,8 @@
 import { describe, expect, test } from "vitest";
-import config from "../../puzzles/ice-slide/config.json";
-import { dailyPuzzle } from "./daily";
-import { isBlocked, localDate, replay, samePoint, slide, type Dir, type Point, type Puzzle } from "./engine";
+import { isBlocked, replay, samePoint, slide, type Dir, type Point, type Puzzle } from "./engine";
+import { levelPuzzle, parRange } from "./levels";
 
-const YEARS = 100;
+const LEVELS = 10_000;
 
 function shortest(puzzle: Puzzle): number {
   const key = ([x, y]: Point) => y * puzzle.width + x;
@@ -20,29 +19,25 @@ function shortest(puzzle: Puzzle): number {
   return Infinity;
 }
 
-function* days(from: string, count: number) {
-  const d = new Date(`${from}T12:00:00`);
-  for (let i = 0; i < count; i++, d.setDate(d.getDate() + 1)) yield localDate(d);
-}
-
 describe("ice slide", () => {
-  test(`every day for ${YEARS} years replays the Bend solution in par moves`, () => {
+  test(`levels 1–${LEVELS} replay the Bend solution in par moves`, () => {
     const failures: string[] = [];
-    for (const date of days(config.epoch, Math.round(YEARS * 365.25))) {
-      const daily = dailyPuzzle(date);
-      if (!daily) {
-        failures.push(`${date}: no puzzle`);
+    for (let level = 1; level <= LEVELS; level++) {
+      const found = levelPuzzle(level);
+      if (!found) {
+        failures.push(`level ${level}: no puzzle`);
         continue;
       }
-      const { puzzle, solution } = daily;
+      const { puzzle, solution } = found;
+      const [min, max] = parRange(level);
       const checks = {
         "start on ice": !isBlocked(puzzle.tiles, puzzle.start),
         "solution reaches exit": samePoint(replay(puzzle, solution), puzzle.exit),
         "solution is par long": solution.length === puzzle.par,
         "par is shortest": shortest(puzzle) === puzzle.par,
-        "par in range": puzzle.par >= config.min && puzzle.par <= config.max,
+        "par in range": puzzle.par >= min && puzzle.par <= max,
       };
-      for (const [name, ok] of Object.entries(checks)) if (!ok) failures.push(`${date}: ${name}`);
+      for (const [name, ok] of Object.entries(checks)) if (!ok) failures.push(`level ${level}: ${name}`);
     }
     expect(failures).toEqual([]);
   }, 120_000);

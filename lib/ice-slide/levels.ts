@@ -1,8 +1,14 @@
-import config from "../../puzzles/ice-slide/config.json";
 import type { Dir, Puzzle } from "./engine";
 import gen, { type List } from "./gen.mjs";
 
+const SEED = 20261030;
 const DIRS = { Up: "U", Down: "D", Left: "L", Right: "R" } as const satisfies Record<string, Dir>;
+
+// Max par climbs by one every five levels and tops out at 15 from level 56.
+export function parRange(level: number): [min: number, max: number] {
+  const max = Math.min(4 + Math.floor((level - 1) / 5), 15);
+  return [max - 2, max];
+}
 
 function toArray<T>(list: List<T>): T[] {
   const out: T[] = [];
@@ -10,17 +16,14 @@ function toArray<T>(list: List<T>): T[] {
   return out;
 }
 
-export function dayNumber(date: string): number {
-  return Math.round(Date.parse(date) / 86_400_000);
-}
-
-export function dailyPuzzle(date: string): { puzzle: Puzzle; solution: string } | null {
-  const found = gen.day(config.min, config.max, config.seed, dayNumber(date));
+export function levelPuzzle(level: number): { puzzle: Puzzle; solution: string } | null {
+  const [min, max] = parRange(level);
+  const found = gen.level(min, max, SEED, level);
   if (found.$ === "None") return null;
   const { seed, game } = found.value;
   return {
     puzzle: {
-      date,
+      level,
       seed,
       width: game.w,
       height: game.h,

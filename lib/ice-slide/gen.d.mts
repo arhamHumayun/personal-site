@@ -22,7 +22,7 @@ export type BendPuzzle = {
 export type { List };
 
 declare const gen: {
-  day(lo: number, hi: number, base: number, day: number): { $: "None" } | { $: "Some"; value: BendPuzzle };
+  level(lo: number, hi: number, base: number, level: number): { $: "None" } | { $: "Some"; value: BendPuzzle };
 };
 
 export default gen;

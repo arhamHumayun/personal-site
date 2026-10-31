@@ -112,19 +112,20 @@ def bfs(levels: Nat, +g: Ice.Grid(), +fuel: Nat, +k: Nat, st: Bfs) -> Bfs:
             List.append(&2, Seen, d, List.append(&2, Seen, e, r)))
           bfs(l, g, fuel, 1n+k, absorb(cands, 1n+k, Bfs{ds, Nil{}, seen}))
 
-# The exit is the farthest stop from the start, ties broken by the seed.
+# The exit is the farthest stop from the start within hi moves, ties broken
+# by the seed.
 def tie(+s: U32, p: Ice.Pos) -> U32:
   match p:
     case Ice.Pos{+x, +y}:
       draw(s, cell_slot(4096, x, y))
 
-def farther(+s: U32, a: Seen, b: Seen) -> Bool:
+def farther(+s: U32, +hi: Nat, a: Seen, b: Seen) -> Bool:
   match a b:
     case Seen{ap, +apath} Seen{bp, +bpath}:
       +la = List.length(&2, Ice.Dir, apath)
       +lb = List.length(&2, Ice.Dir, bpath)
-      Bool.or(Nat.is_gt(la, lb),
-        Bool.and(Nat.is_eq(la, lb), U32.is_gt(tie(s, ap), tie(s, bp))))
+      Bool.and(Nat.is_le(la, hi), Bool.or(Nat.is_gt(la, lb),
+        Bool.and(Nat.is_eq(la, lb), U32.is_gt(tie(s, ap), tie(s, bp)))))
 
 def pick.if(better: Bool, c: Seen, cur: Seen) -> Seen:
   match better:
@@ -133,12 +134,12 @@ def pick.if(better: Bool, c: Seen, cur: Seen) -> Seen:
     case False{}:
       cur
 
-def pick(seen: List<&2, Seen>, +s: U32, +cur: Seen) -> Seen:
+def pick(seen: List<&2, Seen>, +s: U32, +hi: Nat, +cur: Seen) -> Seen:
   match seen:
     case Nil{}:
       cur
     case Con{+c, rest}:
-      pick(rest, s, pick.if(farther(s, c, cur), c, cur))
+      pick(rest, s, hi, pick.if(farther(s, hi, c, cur), c, cur))
 
 # Puzzle
 # ------
@@ -150,12 +151,12 @@ def game.fin(w: Nat, h: Nat, g: Ice.Grid(), start: Ice.Pos, ds: Ice.Dists(), exi
       Ice.Game{w, h, g, start, e, List.length(&2, Ice.Dir, path),
         List.reverse(&2, Ice.Dir, path), ds}
 
-def game.bfs(+s: U32, w: Nat, h: Nat, g: Ice.Grid(), +start: Ice.Pos, st: Bfs) -> Ice.Game:
+def game.bfs(+s: U32, +hi: Nat, w: Nat, h: Nat, g: Ice.Grid(), +start: Ice.Pos, st: Bfs) -> Ice.Game:
   match st:
     case Bfs{ds, front, seen}:
-      game.fin(w, h, g, start, ds, pick(seen, s, Seen{start, Nil{}}))
+      game.fin(w, h, g, start, ds, pick(seen, s, hi, Seen{start, Nil{}}))
 
-def game(+s: U32) -> Ice.Game:
+def game(+hi: Nat, +s: U32) -> Ice.Game:
   +w = Nat.add(8n, below(s, 1, 5))
   +h = Nat.add(8n, below(s, 2, 5))
   +dens = Nat.add(12n, below(s, 3, 10))
@@ -163,11 +164,11 @@ def game(+s: U32) -> Ice.Game:
   +g = board(h, s, dens, w, 0n, start)
   +ds = dset(List.replicate(List<&2, Nat>, h, List.replicate(Nat, w, inf())), start, 0n)
   +seen = {[Seen{start, Nil{}}] : List<&2, Seen>}
-  game.bfs(s, w, h, g, start,
+  game.bfs(s, hi, w, h, g, start,
     bfs(Nat.mul(w, h), g, Nat.add(w, h), 0n, Bfs{ds, seen, seen}))
 
-def puzzle(+s: U32) -> Ice.Puzzle:
-  Ice.Puzzle{s, game(s)}
+def puzzle(+hi: Nat, +s: U32) -> Ice.Puzzle:
+  Ice.Puzzle{s, game(hi, s)}
 
 def accept(+lo: Nat, +hi: Nat, +p: Ice.Puzzle) -> Bool:
   +par = Ice.Game.par(Ice.Puzzle.game(p))
@@ -184,9 +185,9 @@ def keep.if(p: Ice.Puzzle, ok: Bool) -> Maybe<&2, Ice.Puzzle>:
 def keep(+lo: Nat, +hi: Nat, +p: Ice.Puzzle) -> Maybe<&2, Ice.Puzzle>:
   keep.if(p, accept(lo, hi, p))
 
-# Days
-# ----
-# Day i is days since 1970-01-01. The site calls day() from the JS build.
+# Levels
+# ------
+# The site calls level() from the JS build, one call per level.
 
 def seed(+base: U32, +i: Nat, +a: U32) -> U32:
   mix((mix((base .^. U32.from_nat(i) : U32)) + a * 2654435769 : U32))
@@ -201,7 +202,7 @@ def tries(k: Nat, +lo: Nat, +hi: Nat, +base: U32, +i: Nat, +a: U32,
         case Some{p}:
           Some{p}
         case None{}:
-          tries(f, lo, hi, base, i, (a + 1 : U32), keep(lo, hi, puzzle(seed(base, i, a))))
+          tries(f, lo, hi, base, i, (a + 1 : U32), keep(lo, hi, puzzle(hi, seed(base, i, a))))
 
-def day(+lo: Nat, +hi: Nat, +base: U32, +i: Nat) -> Maybe<&2, Ice.Puzzle>:
-  tries(200n, lo, hi, base, i, 0, None{})
+def level(+lo: Nat, +hi: Nat, +base: U32, +i: Nat) -> Maybe<&2, Ice.Puzzle>:
+  tries(1000n, lo, hi, base, i, 0, None{})

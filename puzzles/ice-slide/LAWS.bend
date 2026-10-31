@@ -34,7 +34,7 @@ law replay_stays_on_ice:
 
 # Emitted puzzles
 # ---------------
-# Gen.day is what the generator writes out for day i. Whatever it emits:
+# Gen.level is the puzzle the site shows for level i. Whatever it emits:
 
 # the stored solution walks from the start to the exit,
 law emitted_solvable:
@@ -43,7 +43,7 @@ law emitted_solvable:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   {Ice.replay(Ice.Game.sol(Ice.Puzzle.game(p)), Ice.Game.grid(Ice.Puzzle.game(p)),
     Ice.Game.fuel(Ice.Puzzle.game(p)), Ice.Game.start(Ice.Puzzle.game(p)))
     == Ice.Game.exit(Ice.Puzzle.game(p)) : Ice.Pos}
@@ -55,7 +55,7 @@ law emitted_par_is_solution_length:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   {List.length(&2, Ice.Dir, Ice.Game.sol(Ice.Puzzle.game(p)))
     == Ice.Game.par(Ice.Puzzle.game(p)) : Nat}
 
@@ -66,7 +66,7 @@ law emitted_par_is_shortest:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   for +ms: List<&2, Ice.Dir>
   for reach: {Ice.replay(ms, Ice.Game.grid(Ice.Puzzle.game(p)),
     Ice.Game.fuel(Ice.Puzzle.game(p)), Ice.Game.start(Ice.Puzzle.game(p)))
@@ -81,24 +81,26 @@ law emitted_par_in_range:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   {Bool.and(Nat.is_le(lo, Ice.Game.par(Ice.Puzzle.game(p))),
     Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), hi)) == True{} : Bool}
 
 # Seeds
 # -----
 
-# A puzzle is a pure function of its seed: no clock, no IO, no hidden state.
+# A puzzle is a pure function of its seed and max par: no clock, no IO, no
+# hidden state.
 law same_seed_same_puzzle:
+  for +hi: Nat
   for +seed: U32
-  {Gen.puzzle(seed) == Gen.puzzle(seed) : Ice.Puzzle}
+  {Gen.puzzle(hi, seed) == Gen.puzzle(hi, seed) : Ice.Puzzle}
 
-# The seed written next to an emitted puzzle regenerates exactly that puzzle.
+# An emitted puzzle's seed, with the same max par, regenerates exactly it.
 law emitted_seed_regenerates:
   for +lo: Nat
   for +hi: Nat
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
-  {Gen.puzzle(Ice.Puzzle.seed(p)) == p : Ice.Puzzle}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  {Gen.puzzle(hi, Ice.Puzzle.seed(p)) == p : Ice.Puzzle}

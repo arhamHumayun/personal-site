@@ -1,28 +1,11 @@
 "use client";
 
-import { RotateCcw, Share2, Undo2 } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type PointerEvent,
-} from "react";
+import { ArrowRight, RotateCcw, Undo2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { dailyPuzzle } from "@/lib/ice-slide/daily";
-import {
-  localDate,
-  puzzleNumber,
-  replay,
-  samePoint,
-  slide,
-  type Dir,
-  type Point,
-  type Puzzle,
-} from "@/lib/ice-slide/engine";
-import { loadMoves, loadResult, saveMoves, saveResult, streak } from "@/lib/ice-slide/progress";
+import { replay, samePoint, slide, type Dir, type Point, type Puzzle } from "@/lib/ice-slide/engine";
+import { levelPuzzle } from "@/lib/ice-slide/levels";
+import { loadProgress, saveProgress } from "@/lib/ice-slide/progress";
 import { cn } from "@/lib/utils";
 
 const KEYS: Record<string, Dir> = {
@@ -53,25 +36,64 @@ function towards(dx: number, dy: number): Dir {
 }
 
 export function IceSlide() {
-  const today = useSyncExternalStore(subscribe, localDate, () => null);
-  const daily = useMemo(() => (today ? dailyPuzzle(today) : null), [today]);
-  if (daily) return <Game key={daily.puzzle.date} puzzle={daily.puzzle} />;
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
 
   return (
     <div className="mx-auto w-full max-w-[30rem]">
-      <Header />
-      <div className="flex aspect-square items-center justify-center rounded-md border border-border bg-card lcd-bezel">
-        {today && <p className="meta-label">No puzzle today</p>}
-      </div>
+      {mounted ? (
+        <Levels />
+      ) : (
+        <>
+          <Header />
+          <div className="aspect-square rounded-md border border-border bg-card lcd-bezel" />
+        </>
+      )}
+      <a
+        href="https://bend-lang.com"
+        className="meta-label mt-10 block text-center transition-colors hover:text-link"
+      >
+        Made with Bend
+      </a>
     </div>
   );
 }
 
-function Header({ number }: { number?: number }) {
+function Levels() {
+  const [saved] = useState(loadProgress);
+  const [level, setLevel] = useState(saved.level);
+  const found = levelPuzzle(level);
+
+  const next = useCallback(() => {
+    saveProgress({ level: level + 1, moves: "" });
+    setLevel(level + 1);
+  }, [level]);
+
+  if (!found) {
+    return (
+      <>
+        <Header level={level} />
+        <div className="flex aspect-square items-center justify-center rounded-md border border-border bg-card lcd-bezel">
+          <p className="meta-label">No puzzle for this level</p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <Game
+      key={level}
+      puzzle={found.puzzle}
+      initialMoves={level === saved.level ? saved.moves : ""}
+      onNext={next}
+    />
+  );
+}
+
+function Header({ level }: { level?: number }) {
   return (
     <div className="mb-4 flex items-baseline justify-between gap-4">
       <h1 className="text-2xl font-semibold tracking-tight">Ice Slide</h1>
-      {number !== undefined && <span className="font-mono text-sm text-muted-foreground">#{number}</span>}
+      {level !== undefined && <span className="meta-label">Level {level}</span>}
     </div>
   );
 }
@@ -85,11 +107,16 @@ function Readout({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Game({ puzzle }: { puzzle: Puzzle }) {
-  const [view, setView] = useState(() => ({ moves: loadMoves(puzzle.date), ms: 0 }));
-  const [result, setResult] = useState(() => loadResult(puzzle.date));
-  const [streakDays, setStreakDays] = useState(() => streak(puzzle.date));
-  const [copied, setCopied] = useState(false);
+function Game({
+  puzzle,
+  initialMoves,
+  onNext,
+}: {
+  puzzle: Puzzle;
+  initialMoves: string;
+  onNext: () => void;
+}) {
+  const [view, setView] = useState(() => ({ moves: initialMoves, ms: 0 }));
 
   const moves = useRef(view.moves);
   const queue = useRef<Dir[]>([]);
@@ -103,13 +130,8 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
     (next: string, from: Point, to: Point) => {
       moves.current = next;
       setView({ moves: next, ms: duration(distance(from, to)) });
-      saveMoves(puzzle.date, next);
-      if (samePoint(to, puzzle.exit)) {
-        queue.current = [];
-        saveResult(puzzle.date, next.length);
-        setResult(loadResult(puzzle.date));
-        setStreakDays(streak(puzzle.date));
-      }
+      saveProgress({ level: puzzle.level, moves: next });
+      if (samePoint(to, puzzle.exit)) queue.current = [];
     },
     [puzzle],
   );
@@ -150,7 +172,12 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
-      if (e.target instanceof HTMLElement && e.target.closest("input, textarea, select")) return;
+      const target = e.target instanceof HTMLElement ? e.target : null;
+      if (target?.closest("input, textarea, select")) return;
+      if (e.key === "Enter") {
+        if (solved && !target?.closest("button, a")) onNext();
+        return;
+      }
       const dir = KEYS[e.key.length === 1 ? e.key.toLowerCase() : e.key];
       if (!dir) return;
       e.preventDefault();
@@ -158,7 +185,7 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [push]);
+  }, [push, solved, onNext]);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -180,24 +207,13 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
     if (Math.max(Math.abs(tx), Math.abs(ty)) > 0.5) push(towards(tx, ty));
   };
 
-  const share = async () => {
-    const number = puzzleNumber(puzzle.date);
-    const text = `Ice Slide #${number} — ${result} moves (par ${puzzle.par})\n${location.origin}/puzzle`;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {}
-  };
-
   return (
     <div className="mx-auto w-full max-w-[30rem]">
-      <Header number={puzzleNumber(puzzle.date)} />
+      <Header level={puzzle.level} />
 
       <div className="mb-3 flex items-center gap-5">
         <Readout label="Moves" value={view.moves.length} />
         <Readout label="Par" value={puzzle.par} />
-        <Readout label="Streak" value={streakDays} />
       </div>
 
       <div className="rounded-md border border-border bg-card p-1.5 lcd-bezel sm:p-2">
@@ -277,14 +293,14 @@ function Game({ puzzle }: { puzzle: Puzzle }) {
             <RotateCcw />
           </Button>
         </div>
-        {result !== undefined && (
+        {solved && (
           <div className="flex items-center gap-3">
             <span className="whitespace-nowrap font-mono text-sm" aria-live="polite">
-              Solved in {result} (par {puzzle.par})
+              Solved in {view.moves.length} (par {puzzle.par})
             </span>
-            <Button variant="outline" size="sm" onClick={share}>
-              <Share2 />
-              {copied ? "Copied" : "Share"}
+            <Button variant="outline" size="sm" onClick={onNext} autoFocus>
+              Next
+              <ArrowRight />
             </Button>
           </div>
         )}

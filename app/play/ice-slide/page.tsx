@@ -2,9 +2,9 @@ import { IceSlide } from "@/components/ice-slide/IceSlide";
 
 export const metadata = {
   title: "Ice Slide",
-  description: "A daily ice-sliding puzzle: slide until you hit rock, stop on the exit.",
+  description: "Slide until you hit rock. Stop on the exit.",
 };
 
-export default function PuzzlePage() {
+export default function IceSlidePage() {
   return <IceSlide />;
 }

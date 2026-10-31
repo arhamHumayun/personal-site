@@ -547,15 +547,15 @@ def good(+lo: Nat, +hi: Nat, m: Maybe<&2, Ice.Puzzle>) -> Type:
     case None{}:
       Unit
     case Some{+p}:
-      {Gen.accept(lo, hi, p) == True{} : Bool} & {Gen.puzzle(Ice.Puzzle.seed(p)) == p : Ice.Puzzle}
+      {Gen.accept(lo, hi, p) == True{} : Bool} & {Gen.puzzle(hi, Ice.Puzzle.seed(p)) == p : Ice.Puzzle}
 
 law keep_if_good:
   for +lo: Nat
   for +hi: Nat
   for +sd: U32
   for b: Bool
-  for hb: {Gen.accept(lo, hi, Gen.puzzle(sd)) == b : Bool}
-  good(lo, hi, Gen.keep.if(Gen.puzzle(sd), b))
+  for hb: {Gen.accept(lo, hi, Gen.puzzle(hi, sd)) == b : Bool}
+  good(lo, hi, Gen.keep.if(Gen.puzzle(hi, sd), b))
 
 def keep_if_good(lo, hi, sd, b, hb):
   match b:
@@ -585,9 +585,9 @@ def tries_good(k, lo, hi, base, i, a, m, hm):
           hm
         case None{}:
           tries_good(f, lo, hi, base, i, (a + 1 : U32),
-            Gen.keep(lo, hi, Gen.puzzle(Gen.seed(base, i, a))),
+            Gen.keep(lo, hi, Gen.puzzle(hi, Gen.seed(base, i, a))),
             keep_if_good(lo, hi, Gen.seed(base, i, a),
-              Gen.accept(lo, hi, Gen.puzzle(Gen.seed(base, i, a))), {==}))
+              Gen.accept(lo, hi, Gen.puzzle(hi, Gen.seed(base, i, a))), {==}))
 
 law good_at:
   for +lo: Nat
@@ -608,12 +608,12 @@ law emitted_good:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   good(lo, hi, Some{p})
 
 def emitted_good(lo, hi, base, i, p, h):
-  good_at(lo, hi, Gen.day(lo, hi, base, i), p,
-    tries_good(200n, lo, hi, base, i, 0, None{}, Unit{}), h)
+  good_at(lo, hi, Gen.level(lo, hi, base, i), p,
+    tries_good(1000n, lo, hi, base, i, 0, None{}, Unit{}), h)
 
 law good_accepted:
   for +lo: Nat
@@ -631,7 +631,7 @@ law good_regen:
   for +hi: Nat
   for +p: Ice.Puzzle
   for hg: good(lo, hi, Some{p})
-  {Gen.puzzle(Ice.Puzzle.seed(p)) == p : Ice.Puzzle}
+  {Gen.puzzle(hi, Ice.Puzzle.seed(p)) == p : Ice.Puzzle}
 
 def good_regen(lo, hi, p, hg):
   (acc, regen) = hg
@@ -643,7 +643,7 @@ law emitted_valid:
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.day(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   {Ice.Game.valid(Ice.Puzzle.game(p)) == True{} : Bool}
 
 def emitted_valid(lo, hi, base, i, p, h):
@@ -670,7 +670,7 @@ def Laws.emitted_par_in_range(lo, hi, base, i, p, h):
     Ice.Game.valid(Ice.Puzzle.game(p)),
     good_accepted(lo, hi, p, emitted_good(lo, hi, base, i, p, h)))
 
-def Laws.same_seed_same_puzzle(seed):
+def Laws.same_seed_same_puzzle(hi, seed):
   {==}
 
 def Laws.emitted_seed_regenerates(lo, hi, base, i, p, h):
