@@ -37,6 +37,7 @@ export default function TinyShip() {
         title={metadata.title}
         description={metadata.description}
         image={metadata.img}
+        href="/play/tiny-ship"
       />
       <div className="text-gray-700 dark:text-gray-300">
         <P>
