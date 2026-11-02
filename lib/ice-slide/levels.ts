@@ -4,12 +4,6 @@ import gen, { type List } from "./gen.mjs";
 const SEED = 20261030;
 const DIRS = { Up: "U", Down: "D", Left: "L", Right: "R" } as const satisfies Record<string, Dir>;
 
-// Max par climbs by one every five levels and tops out at 15 from level 56.
-export function parRange(level: number): [min: number, max: number] {
-  const max = Math.min(4 + Math.floor((level - 1) / 5), 15);
-  return [max - 2, max];
-}
-
 function toArray<T>(list: List<T>): T[] {
   const out: T[] = [];
   for (let l = list; l.$ === "Con"; l = l.tail) out.push(l.head);
@@ -17,8 +11,7 @@ function toArray<T>(list: List<T>): T[] {
 }
 
 export function levelPuzzle(level: number): { puzzle: Puzzle; solution: string } | null {
-  const [min, max] = parRange(level);
-  const found = gen.level(min, max, SEED, level);
+  const found = gen.level(SEED, level);
   if (found.$ === "None") return null;
   const { seed, game } = found.value;
   return {

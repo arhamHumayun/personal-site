@@ -170,10 +170,11 @@ def game(+hi: Nat, +s: U32) -> Ice.Game:
 def puzzle(+hi: Nat, +s: U32) -> Ice.Puzzle:
   Ice.Puzzle{s, game(hi, s)}
 
+# Par is never below 5, whatever range a level asks for.
 def accept(+lo: Nat, +hi: Nat, +p: Ice.Puzzle) -> Bool:
   +par = Ice.Game.par(Ice.Puzzle.game(p))
-  Bool.and(Bool.and(Nat.is_le(lo, par), Nat.is_le(par, hi)),
-    Ice.Game.valid(Ice.Puzzle.game(p)))
+  Bool.and(Nat.is_le(5n, par), Bool.and(Bool.and(Nat.is_le(lo, par), Nat.is_le(par, hi)),
+    Ice.Game.valid(Ice.Puzzle.game(p))))
 
 def keep.if(p: Ice.Puzzle, ok: Bool) -> Maybe<&2, Ice.Puzzle>:
   match ok:
@@ -204,5 +205,13 @@ def tries(k: Nat, +lo: Nat, +hi: Nat, +base: U32, +i: Nat, +a: U32,
         case None{}:
           tries(f, lo, hi, base, i, (a + 1 : U32), keep(lo, hi, puzzle(hi, seed(base, i, a))))
 
-def level(+lo: Nat, +hi: Nat, +base: U32, +i: Nat) -> Maybe<&2, Ice.Puzzle>:
-  tries(1000n, lo, hi, base, i, 0, None{})
+# Max par climbs by one every five levels, from 5 up to 15; par never goes
+# below 5.
+def max_par(+i: Nat) -> Nat:
+  Nat.min(Nat.add(5n, Nat.div(Nat.sub(i, 1n), 5n)), 15n)
+
+def min_par(+i: Nat) -> Nat:
+  Nat.max(Nat.sub(max_par(i), 2n), 5n)
+
+def level(+base: U32, +i: Nat) -> Maybe<&2, Ice.Puzzle>:
+  tries(1000n, min_par(i), max_par(i), base, i, 0, None{})

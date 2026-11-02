@@ -22,7 +22,9 @@ export type BendPuzzle = {
 export type { List };
 
 declare const gen: {
-  level(lo: number, hi: number, base: number, level: number): { $: "None" } | { $: "Some"; value: BendPuzzle };
+  min_par(level: number): number;
+  max_par(level: number): number;
+  level(base: number, level: number): { $: "None" } | { $: "Some"; value: BendPuzzle };
 };
 
 export default gen;

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { isBlocked, replay, samePoint, slide, type Dir, type Point, type Puzzle } from "./engine";
-import { levelPuzzle, parRange } from "./levels";
+import gen from "./gen.mjs";
+import { levelPuzzle } from "./levels";
 
 const LEVELS = 10_000;
 
@@ -29,13 +30,13 @@ describe("ice slide", () => {
         continue;
       }
       const { puzzle, solution } = found;
-      const [min, max] = parRange(level);
       const checks = {
         "start on ice": !isBlocked(puzzle.tiles, puzzle.start),
         "solution reaches exit": samePoint(replay(puzzle, solution), puzzle.exit),
         "solution is par long": solution.length === puzzle.par,
         "par is shortest": shortest(puzzle) === puzzle.par,
-        "par in range": puzzle.par >= min && puzzle.par <= max,
+        "par in range": puzzle.par >= gen.min_par(level) && puzzle.par <= gen.max_par(level),
+        "par at least 5": puzzle.par >= 5,
       };
       for (const [name, ok] of Object.entries(checks)) if (!ok) failures.push(`level ${level}: ${name}`);
     }

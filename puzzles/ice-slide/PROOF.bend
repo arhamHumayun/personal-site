@@ -431,17 +431,15 @@ def good_at(lo, hi, m, p, hm, h):
   hm
 
 law emitted_good:
-  for +lo: Nat
-  for +hi: Nat
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
-  good(lo, hi, Some{p})
+  for h: {Gen.level(base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  good(Gen.min_par(i), Gen.max_par(i), Some{p})
 
-def emitted_good(lo, hi, base, i, p, h):
-  good_at(lo, hi, Gen.level(lo, hi, base, i), p,
-    tries_good(1000n, lo, hi, base, i, 0, None{}, Unit{}), h)
+def emitted_good(base, i, p, h):
+  good_at(Gen.min_par(i), Gen.max_par(i), Gen.level(base, i), p,
+    tries_good(1000n, Gen.min_par(i), Gen.max_par(i), base, i, 0, None{}, Unit{}), h)
 
 law good_accepted:
   for +lo: Nat
@@ -466,40 +464,50 @@ def good_regen(lo, hi, p, hg):
   regen
 
 law emitted_valid:
-  for +lo: Nat
-  for +hi: Nat
   for +base: U32
   for +i: Nat
   for +p: Ice.Puzzle
-  for h: {Gen.level(lo, hi, base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
+  for h: {Gen.level(base, i) == Some{p} : Maybe<&2, Ice.Puzzle>}
   {Ice.Game.valid(Ice.Puzzle.game(p)) == True{} : Bool}
 
-def emitted_valid(lo, hi, base, i, p, h):
-  L.and_r(Bool.and(Nat.is_le(lo, Ice.Game.par(Ice.Puzzle.game(p))),
-      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), hi)),
+def emitted_valid(base, i, p, h):
+  L.and_r(Bool.and(Nat.is_le(Gen.min_par(i), Ice.Game.par(Ice.Puzzle.game(p))),
+      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), Gen.max_par(i))),
     Ice.Game.valid(Ice.Puzzle.game(p)),
-    good_accepted(lo, hi, p, emitted_good(lo, hi, base, i, p, h)))
+    L.and_r(Nat.is_le(5n, Ice.Game.par(Ice.Puzzle.game(p))),
+      Bool.and(Bool.and(Nat.is_le(Gen.min_par(i), Ice.Game.par(Ice.Puzzle.game(p))),
+      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), Gen.max_par(i))), Ice.Game.valid(Ice.Puzzle.game(p))),
+      good_accepted(Gen.min_par(i), Gen.max_par(i), p, emitted_good(base, i, p, h))))
 
 # Laws
 # ----
 
-def Laws.emitted_solvable(lo, hi, base, i, p, h):
-  valid_reaches(Ice.Puzzle.game(p), emitted_valid(lo, hi, base, i, p, h))
+def Laws.emitted_solvable(base, i, p, h):
+  valid_reaches(Ice.Puzzle.game(p), emitted_valid(base, i, p, h))
 
-def Laws.emitted_par_is_solution_length(lo, hi, base, i, p, h):
-  valid_length(Ice.Puzzle.game(p), emitted_valid(lo, hi, base, i, p, h))
+def Laws.emitted_par_is_solution_length(base, i, p, h):
+  valid_length(Ice.Puzzle.game(p), emitted_valid(base, i, p, h))
 
-def Laws.emitted_par_is_shortest(lo, hi, base, i, p, h, ms, reach):
-  game_shortest(Ice.Puzzle.game(p), emitted_valid(lo, hi, base, i, p, h), ms, reach)
+def Laws.emitted_par_is_shortest(base, i, p, h, ms, reach):
+  game_shortest(Ice.Puzzle.game(p), emitted_valid(base, i, p, h), ms, reach)
 
-def Laws.emitted_par_in_range(lo, hi, base, i, p, h):
-  L.and_l(Bool.and(Nat.is_le(lo, Ice.Game.par(Ice.Puzzle.game(p))),
-      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), hi)),
+def Laws.emitted_par_in_range(base, i, p, h):
+  L.and_l(Bool.and(Nat.is_le(Gen.min_par(i), Ice.Game.par(Ice.Puzzle.game(p))),
+      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), Gen.max_par(i))),
     Ice.Game.valid(Ice.Puzzle.game(p)),
-    good_accepted(lo, hi, p, emitted_good(lo, hi, base, i, p, h)))
+    L.and_r(Nat.is_le(5n, Ice.Game.par(Ice.Puzzle.game(p))),
+      Bool.and(Bool.and(Nat.is_le(Gen.min_par(i), Ice.Game.par(Ice.Puzzle.game(p))),
+      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), Gen.max_par(i))), Ice.Game.valid(Ice.Puzzle.game(p))),
+      good_accepted(Gen.min_par(i), Gen.max_par(i), p, emitted_good(base, i, p, h))))
 
 def Laws.same_seed_same_puzzle(hi, seed):
   {==}
 
-def Laws.emitted_seed_regenerates(lo, hi, base, i, p, h):
-  good_regen(lo, hi, p, emitted_good(lo, hi, base, i, p, h))
+def Laws.emitted_seed_regenerates(base, i, p, h):
+  good_regen(Gen.min_par(i), Gen.max_par(i), p, emitted_good(base, i, p, h))
+
+def Laws.emitted_par_at_least_5(base, i, p, h):
+  L.and_l(Nat.is_le(5n, Ice.Game.par(Ice.Puzzle.game(p))),
+    Bool.and(Bool.and(Nat.is_le(Gen.min_par(i), Ice.Game.par(Ice.Puzzle.game(p))),
+      Nat.is_le(Ice.Game.par(Ice.Puzzle.game(p)), Gen.max_par(i))), Ice.Game.valid(Ice.Puzzle.game(p))),
+    good_accepted(Gen.min_par(i), Gen.max_par(i), p, emitted_good(base, i, p, h)))
