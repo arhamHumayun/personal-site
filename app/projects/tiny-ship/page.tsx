@@ -37,6 +37,7 @@ export default function TinyShip() {
         title={metadata.title}
         description={metadata.description}
         image={metadata.img}
+        href="/play/tiny-ship"
       />
       <div className="text-gray-700 dark:text-gray-300">
         <P>
@@ -48,13 +49,7 @@ export default function TinyShip() {
           free to play.
         </P>
         <Button asChild variant="link" className="p-0 mt-2">
-          <Link
-            href="https://arham99.itch.io/tiny-ship"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Play on itch.io
-          </Link>
+          <Link href="/play/tiny-ship">Play</Link>
         </Button>
         <br></br>
         <Button asChild variant="link" className="p-0 mt-1">
