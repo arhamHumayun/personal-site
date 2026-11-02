@@ -33,6 +33,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     images: ["/opengraph-image"],
   },
+  // Ties the domain to AdSense for the games on its subdomains. No ads run here.
+  other: {
+    "google-adsense-account": "ca-pub-4112926561747691",
+  },
 };
 
 export default function RootLayout({
