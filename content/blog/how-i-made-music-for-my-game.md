@@ -1,6 +1,7 @@
 ---
 title: "I had Claude write my game's soundtrack using only Python"
 date: "2026-10-08"
+heroImage: "/images/how-i-made-music-for-my-game.jpg"
 ---
 
 In my quest to add some life to Tiny Ship, I had run into the hard problem of finding music to put into the game. The game is a very simple twin-stick shooter with roguelike elements and borrows a lot from Kingdom Hearts 2 in terms of gameplay mechanics. I wanted a fun, intense, yet enjoyable track that plays while you’re blasting ships.
