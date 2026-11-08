@@ -1,6 +1,7 @@
 ---
 title: "People experience artifacts, not the construction"
 date: "2026-10-26"
+heroImage: "/images/artifacts-vs-constructs.jpg"
 ---
 
 ## Mechanics of Judgement

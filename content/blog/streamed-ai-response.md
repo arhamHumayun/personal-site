@@ -1,6 +1,7 @@
 ---
 title: "Unbreakable AI Chat: Streaming Responses with Convex + Vercel AI SDK"
 date: "2025-04-30"
+heroImage: "/images/streamed-ai-response.jpg"
 ---
 
 Streaming AI responses is easy until something goes wrong. Maybe your user loses internet, or your server hiccups. Suddenly, your beautiful real-time chat breaks. Lost messages and broken UX with no recovery. I built a solution using Convex and the Vercel AI SDK that solves this with minimal complexity and no database spam.
