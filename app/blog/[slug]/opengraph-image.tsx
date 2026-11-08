@@ -1,4 +1,5 @@
 import { getPostMetadata } from "@/lib/blog";
+import { tryHeroImageResponse } from "@/lib/og/hero-share-image";
 import { OG_SIZE, renderBlogShareImage } from "@/lib/og/share-card";
 
 export const alt = "Arham Humayun blog post";
@@ -13,6 +14,10 @@ type ImageProps = {
 export default async function Image({ params }: ImageProps) {
   const { slug } = await params;
   const post = slug ? await getPostMetadata(slug) : null;
+  const cover = tryHeroImageResponse(post?.heroImage);
+  if (cover) {
+    return cover;
+  }
 
   return renderBlogShareImage({
     title: post?.title ?? "Blog Post",

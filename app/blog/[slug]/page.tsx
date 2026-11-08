@@ -9,6 +9,7 @@ import {
   getMarkdownPostSlugs,
   getTsxPostSlugs,
 } from "@/lib/blog";
+import { contentTypeForPath } from "@/lib/og/hero-share-image";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -33,6 +34,15 @@ export async function generateMetadata({
   }
 
   const description = derivePostDescription(post.content);
+  const coverImages = post.heroImage
+    ? [
+        {
+          url: post.heroImage,
+          alt: post.title,
+          type: contentTypeForPath(post.heroImage),
+        },
+      ]
+    : undefined;
 
   return {
     title: post.title,
@@ -43,11 +53,13 @@ export async function generateMetadata({
       type: "article",
       siteName: "Arham Humayun",
       locale: "en_US",
+      ...(coverImages ? { images: coverImages } : {}),
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
+      ...(coverImages ? { images: coverImages } : {}),
     },
   };
 }
